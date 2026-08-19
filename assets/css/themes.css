@@ -1,0 +1,84 @@
+/* ============================================
+   Theme Palettes — switch via [data-theme] on <html>
+   ============================================ */
+
+:root,
+[data-theme="luxury"] {
+  --color-bg: #f6f1e7;
+  --color-surface: #ffffff;
+  --color-header: #14213d;
+  --color-header-contrast: #f6f1e7;
+  --color-primary: #14213d;
+  --color-primary-contrast: #ffffff;
+  --color-accent: #c9a227;
+  --color-text: #201d16;
+  --color-muted: #756f61;
+  --color-border: #e6dfcd;
+  --color-success-bg: #dcecd9; --color-success-text: #2c5c33;
+  --color-error-bg: #f6dede;   --color-error-text: #8c2f2f;
+  --color-warning-bg: #f7ecd4; --color-warning-text: #7a5a15;
+  --radius: 10px;
+  --shadow: 0 2px 10px rgba(20, 33, 61, 0.08);
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+[data-theme="minimalist"] {
+  --color-bg: #ffffff;
+  --color-surface: #fafafa;
+  --color-header: #ffffff;
+  --color-header-contrast: #111111;
+  --color-primary: #111111;
+  --color-primary-contrast: #ffffff;
+  --color-accent: #111111;
+  --color-text: #161616;
+  --color-muted: #767676;
+  --color-border: #e7e7e7;
+  --color-success-bg: #e7f5e9; --color-success-text: #1e5e2a;
+  --color-error-bg: #fbe9e9;   --color-error-text: #92302f;
+  --color-warning-bg: #f8f1de; --color-warning-text: #7a5a15;
+  --radius: 4px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06);
+  --font-heading: 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+[data-theme="vibrant"] {
+  --color-bg: #fff7ef;
+  --color-surface: #ffffff;
+  --color-header: #ff5a5f;
+  --color-header-contrast: #ffffff;
+  --color-primary: #ff5a5f;
+  --color-primary-contrast: #ffffff;
+  --color-accent: #00c2a8;
+  --color-text: #232323;
+  --color-muted: #706a63;
+  --color-border: #ffe1c9;
+  --color-success-bg: #dff7ef; --color-success-text: #0d7a5f;
+  --color-error-bg: #ffe3e1;   --color-error-text: #b3272c;
+  --color-warning-bg: #fff1d6; --color-warning-text: #8a5a00;
+  --radius: 16px;
+  --shadow: 0 6px 18px rgba(255, 90, 95, 0.15);
+  --font-heading: 'Poppins', system-ui, sans-serif;
+  --font-body: 'Poppins', system-ui, sans-serif;
+}
+
+[data-theme="dark"] {
+  --color-bg: #0f1420;
+  --color-surface: #161d2e;
+  --color-header: #0b0f19;
+  --color-header-contrast: #e6e9f0;
+  --color-primary: #4f8cff;
+  --color-primary-contrast: #0b0f19;
+  --color-accent: #4f8cff;
+  --color-text: #e6e9f0;
+  --color-muted: #9aa4b8;
+  --color-border: #232b3e;
+  --color-success-bg: #12321f; --color-success-text: #7fe0a0;
+  --color-error-bg: #3a1620;   --color-error-text: #ff8a93;
+  --color-warning-bg: #332612; --color-warning-text: #f0c674;
+  --radius: 8px;
+  --shadow: 0 4px 16px rgba(0,0,0,0.4);
+  --font-heading: 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}

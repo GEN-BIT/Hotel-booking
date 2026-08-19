@@ -1,0 +1,39 @@
+.admin-layout { display: flex; min-height: 100vh; background: var(--color-bg); }
+.admin-sidebar { width: 230px; background: var(--color-header); color: var(--color-header-contrast); padding: 1.25rem 1rem; flex-shrink: 0; }
+.admin-sidebar .logo { color: var(--color-header-contrast); font-family: var(--font-heading); font-weight: 700; text-decoration: none; display: block; margin-bottom: 1.5rem; font-size: 1.2rem; }
+.admin-sidebar nav { display: flex; flex-direction: column; gap: 0.35rem; }
+.admin-sidebar nav a { color: var(--color-header-contrast); opacity: 0.75; text-decoration: none; padding: 0.5rem 0.6rem; border-radius: 6px; }
+.admin-sidebar nav a:hover { opacity: 1; background: rgba(255,255,255,0.08); }
+.admin-sidebar .theme-switcher {
+  margin-top: 1rem;
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: var(--radius); padding: 0.25rem 0.5rem;
+  box-shadow: var(--shadow);
+}
+.admin-sidebar .theme-select {
+  border: none !important; background: transparent !important;
+  color: var(--color-text) !important; font-size: 0.9rem !important;
+  padding: 0.35rem 0.5rem !important; cursor: pointer; width: 100%;
+  font-weight: 600 !important;
+}
+.admin-sidebar .theme-select option {
+  background: var(--color-surface) !important; color: var(--color-text) !important;
+  font-weight: 600 !important; padding: 0.4rem 0.6rem !important;
+  font-size: 0.9rem !important;
+}
+
+.admin-main { flex: 1; padding: 2rem; }
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 1rem; margin-top: 1rem; }
+.stat-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius); padding: 1.1rem; text-align: center; box-shadow: var(--shadow); }
+.stat-card h3 { margin: 0; font-size: 1.7rem; color: var(--color-primary); }
+.stat-card p { margin: 0.3rem 0 0; color: var(--color-muted); font-size: 0.85rem; }
+
+.action-buttons { display: flex; gap: 0.75rem; margin: 1rem 0; flex-wrap: wrap; }
+.checkbox { flex-direction: row !important; align-items: center; gap: 0.5rem !important; color: var(--color-text) !important; }
+.filter-form { margin-bottom: 1rem; }
+.filter-form select { max-width: 220px; }
+
+.chart-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius); padding: 1.25rem; margin-top: 1.5rem; box-shadow: var(--shadow); }
+.activity-log { list-style: none; padding: 0; margin-top: 1rem; }
+.activity-log li { padding: 0.6rem 0; border-bottom: 1px solid var(--color-border); font-size: 0.9rem; }
+.activity-log .activity-time { color: var(--color-muted); font-size: 0.8rem; }
