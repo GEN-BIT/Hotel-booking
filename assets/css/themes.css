@@ -23,26 +23,6 @@
   --font-body: 'Inter', system-ui, sans-serif;
 }
 
-[data-theme="minimalist"] {
-  --color-bg: #ffffff;
-  --color-surface: #fafafa;
-  --color-header: #ffffff;
-  --color-header-contrast: #111111;
-  --color-primary: #111111;
-  --color-primary-contrast: #ffffff;
-  --color-accent: #111111;
-  --color-text: #161616;
-  --color-muted: #767676;
-  --color-border: #e7e7e7;
-  --color-success-bg: #e7f5e9; --color-success-text: #1e5e2a;
-  --color-error-bg: #fbe9e9;   --color-error-text: #92302f;
-  --color-warning-bg: #f8f1de; --color-warning-text: #7a5a15;
-  --radius: 4px;
-  --shadow: 0 1px 3px rgba(0,0,0,0.06);
-  --font-heading: 'Inter', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
-}
-
 [data-theme="vibrant"] {
   --color-bg: #fff7ef;
   --color-surface: #ffffff;

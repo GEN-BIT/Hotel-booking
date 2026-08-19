@@ -3,6 +3,9 @@
 $checkIn  = $_GET['check_in'] ?? '';
 $checkOut = $_GET['check_out'] ?? '';
 $guests   = (int)($_GET['guests'] ?? 1);
+$roomTypeId = (int)($_GET['room_type_id'] ?? 0);
+$minPrice = (float)($_GET['min_price'] ?? 0);
+$maxPrice = (float)($_GET['max_price'] ?? 0);
 $results  = [];
 $error    = '';
 
@@ -14,22 +17,34 @@ if (!$checkIn || !$checkOut) {
 } elseif ($checkOut <= $checkIn) {
     $error = 'Check-out date must be after check-in date.';
 } else {
-    // Room types that can hold the party size, with at least one physical
-    // room not booked for any overlapping date range.
-    $stmt = $pdo->prepare(
-        'SELECT rt.*, r.id AS room_id, r.room_number
-         FROM room_types rt
-         JOIN rooms r ON r.room_type_id = rt.id
-         WHERE rt.max_occupancy >= ?
-           AND r.status != "maintenance"
-           AND r.id NOT IN (
-               SELECT b.room_id FROM bookings b
-               WHERE b.status IN ("pending","confirmed","checked_in")
-                 AND b.check_in < ? AND b.check_out > ?
-           )
-         GROUP BY rt.id'
-    );
-    $stmt->execute([$guests, $checkOut, $checkIn]);
+    $sql = 'SELECT rt.*, r.id AS room_id, r.room_number
+            FROM room_types rt
+            JOIN rooms r ON r.room_type_id = rt.id
+            WHERE rt.max_occupancy >= ?
+              AND r.status != "maintenance"
+              AND r.id NOT IN (
+                  SELECT b.room_id FROM bookings b
+                  WHERE b.status IN ("pending","confirmed","checked_in")
+                    AND b.check_in < ? AND b.check_out > ?
+              )';
+    $params = [$guests, $checkOut, $checkIn];
+
+    if ($roomTypeId > 0) {
+        $sql .= ' AND rt.id = ?';
+        $params[] = $roomTypeId;
+    }
+    if ($minPrice > 0) {
+        $sql .= ' AND rt.base_price >= ?';
+        $params[] = $minPrice;
+    }
+    if ($maxPrice > 0) {
+        $sql .= ' AND rt.base_price <= ?';
+        $params[] = $maxPrice;
+    }
+
+    $sql .= ' GROUP BY rt.id';
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
     $results = $stmt->fetchAll();
 }
 
@@ -47,6 +62,14 @@ require __DIR__ . '/../includes/header.php';
 <?php foreach ($results as $r): ?>
     <div class="room-card">
         <h2><?= htmlspecialchars($r['name']) ?> — Room <?= htmlspecialchars($r['room_number']) ?></h2>
+        <?php
+        $stmt = $pdo->prepare('SELECT AVG(rating) AS avg_rating, COUNT(*) AS total FROM reviews WHERE room_type_id = ?');
+        $stmt->execute([$r['id']]);
+        $ratingSummary = $stmt->fetch();
+        ?>
+        <?php if ($ratingSummary['total'] > 0): ?>
+            <p class="stars">★ <?= number_format($ratingSummary['avg_rating'], 1) ?> (<?= (int)$ratingSummary['total'] ?>)</p>
+        <?php endif; ?>
         <p class="price">$<?= number_format($r['base_price'], 2) ?> / night</p>
         <a href="<?= BASE_URL ?>booking/select-room.php?room_id=<?= (int)$r['room_id'] ?>&check_in=<?= urlencode($checkIn) ?>&check_out=<?= urlencode($checkOut) ?>&guests=<?= $guests ?>">
             Book This Room

@@ -35,7 +35,12 @@ require_role_any(['admin', 'staff']);
         <a href="<?= BASE_URL ?>admin/payments/index.php">Payments</a>
         <a href="<?= BASE_URL ?>admin/coupons/index.php">Coupons</a>
         <a href="<?= BASE_URL ?>admin/reviews/index.php">Reviews</a>
-        <a href="<?= BASE_URL ?>admin/reports/occupancy.php">Reports</a>
+        <a href="<?= BASE_URL ?>admin/reports/occupancy.php">Occupancy</a>
+        <a href="<?= BASE_URL ?>admin/reports/revenue.php">Revenue</a>
+        <a href="<?= BASE_URL ?>admin/reports/arrivals.php">Arrivals</a>
+        <a href="<?= BASE_URL ?>admin/reports/departures.php">Departures</a>
+        <a href="<?= BASE_URL ?>admin/reports/room-performance.php">Room Performance</a>
+        <a href="<?= BASE_URL ?>admin/reports/cancellations.php">Cancellations</a>
         <a href="<?= BASE_URL ?>admin/activity-log.php">Activity Log</a>
         <?php if (current_role() === 'admin'): ?>
         <a href="<?= BASE_URL ?>admin/staff/index.php">Staff</a>
@@ -47,7 +52,6 @@ require_role_any(['admin', 'staff']);
         <div class="theme-switcher">
             <select id="theme-select" class="theme-select" aria-label="Theme">
                 <option value="luxury">Luxury</option>
-                <option value="minimalist">Minimalist</option>
                 <option value="vibrant">Vibrant</option>
                 <option value="dark">Dark</option>
             </select>

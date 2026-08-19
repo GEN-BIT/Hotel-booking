@@ -44,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endforeach; ?>
         </select>
     </label>
+    <p><a href="photos.php?room_id=<?= (int)$room['id'] ?>" class="cta">Manage Photos</a></p>
     <button type="submit">Save Changes</button>
 </form>
 <?php require __DIR__ . '/../../includes/admin-footer.php'; ?>

@@ -6,6 +6,8 @@ $stats = [
     'bookings_today' => $pdo->query('SELECT COUNT(*) FROM bookings WHERE check_in = CURDATE()')->fetchColumn(),
     'pending'  => $pdo->query('SELECT COUNT(*) FROM bookings WHERE status = "pending"')->fetchColumn(),
     'revenue'  => $pdo->query('SELECT COALESCE(SUM(amount),0) FROM payments WHERE status = "paid"')->fetchColumn(),
+    'arrivals_today' => $pdo->query('SELECT COUNT(*) FROM bookings WHERE check_in = CURDATE() AND status IN ("pending","confirmed")')->fetchColumn(),
+    'departures_today' => $pdo->query('SELECT COUNT(*) FROM bookings WHERE check_out = CURDATE() AND status = "checked_in"')->fetchColumn(),
 ];
 
 $bookingsRaw = $pdo->query(
@@ -29,14 +31,69 @@ for ($i = 13; $i >= 0; $i--) {
 }
 
 $recentActivity = $pdo->query('SELECT * FROM activity_log ORDER BY created_at DESC LIMIT 15')->fetchAll();
+
+$arrivals = $pdo->query(
+    'SELECT b.booking_reference, u.full_name, r.room_number, rt.name AS type_name
+     FROM bookings b
+     JOIN users u ON b.user_id = u.id
+     JOIN rooms r ON b.room_id = r.id
+     JOIN room_types rt ON r.room_type_id = rt.id
+     WHERE b.check_in = CURDATE() AND b.status IN ("pending","confirmed")
+     ORDER BY b.created_at ASC LIMIT 5'
+)->fetchAll();
+
+$departures = $pdo->query(
+    'SELECT b.booking_reference, u.full_name, r.room_number, rt.name AS type_name
+     FROM bookings b
+     JOIN users u ON b.user_id = u.id
+     JOIN rooms r ON b.room_id = r.id
+     JOIN room_types rt ON r.room_type_id = rt.id
+     WHERE b.check_out = CURDATE() AND b.status = "checked_in"
+     ORDER BY b.created_at ASC LIMIT 5'
+)->fetchAll();
 ?>
 <h1>Dashboard</h1>
 <div class="stat-grid">
     <div class="stat-card"><h3><?= $stats['rooms'] ?></h3><p>Total Rooms</p></div>
     <div class="stat-card"><h3><?= $stats['occupied'] ?></h3><p>Occupied Now</p></div>
-    <div class="stat-card"><h3><?= $stats['bookings_today'] ?></h3><p>Check-ins Today</p></div>
+    <div class="stat-card"><h3><?= $stats['arrivals_today'] ?></h3><p>Arrivals Today</p></div>
+    <div class="stat-card"><h3><?= $stats['departures_today'] ?></h3><p>Departures Today</p></div>
     <div class="stat-card"><h3><?= $stats['pending'] ?></h3><p>Pending Bookings</p></div>
     <div class="stat-card"><h3>$<?= number_format($stats['revenue'], 2) ?></h3><p>Total Revenue</p></div>
+</div>
+
+<div class="chart-card">
+    <h3>Today's Arrivals</h3>
+    <?php if (!$arrivals): ?>
+        <p>No arrivals scheduled for today.</p>
+    <?php else: ?>
+    <ul class="activity-log">
+        <?php foreach ($arrivals as $a): ?>
+        <li>
+            <strong><?= htmlspecialchars($a['full_name']) ?></strong> — <?= htmlspecialchars($a['type_name']) ?> Room <?= htmlspecialchars($a['room_number']) ?>
+            <div class="activity-time"><?= htmlspecialchars($a['booking_reference']) ?></div>
+        </li>
+        <?php endforeach; ?>
+    </ul>
+    <a href="reports/arrivals.php" style="display:inline-block; margin-top:0.75rem;">View All Arrivals &rarr;</a>
+    <?php endif; ?>
+</div>
+
+<div class="chart-card">
+    <h3>Today's Departures</h3>
+    <?php if (!$departures): ?>
+        <p>No departures scheduled for today.</p>
+    <?php else: ?>
+    <ul class="activity-log">
+        <?php foreach ($departures as $d): ?>
+        <li>
+            <strong><?= htmlspecialchars($d['full_name']) ?></strong> — <?= htmlspecialchars($d['type_name']) ?> Room <?= htmlspecialchars($d['room_number']) ?>
+            <div class="activity-time"><?= htmlspecialchars($d['booking_reference']) ?></div>
+        </li>
+        <?php endforeach; ?>
+    </ul>
+    <a href="reports/departures.php" style="display:inline-block; margin-top:0.75rem;">View All Departures &rarr;</a>
+    <?php endif; ?>
 </div>
 
 <div class="chart-card">

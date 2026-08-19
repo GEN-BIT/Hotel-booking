@@ -25,7 +25,7 @@ require __DIR__ . '/../includes/header.php';
         <td><?= htmlspecialchars($i['check_in']) ?> &rarr; <?= htmlspecialchars($i['check_out']) ?></td>
         <td>$<?= number_format($i['total_price'], 2) ?></td>
         <td><?= htmlspecialchars($i['payment_status'] ?? 'unpaid') ?></td>
-        <td><a href="reservation-details.php?id=<?= (int)$i['id'] ?>">View</a></td>
+        <td><a href="invoice.php?id=<?= (int)$i['id'] ?>">View Invoice</a></td>
     </tr>
     <?php endforeach; ?>
 </table>

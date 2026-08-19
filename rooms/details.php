@@ -30,6 +30,10 @@ $stmt = $pdo->prepare(
 $stmt->execute([$id]);
 $reviews = $stmt->fetchAll();
 
+$stmt = $pdo->prepare('SELECT file_path FROM room_photos WHERE room_id IN (SELECT id FROM rooms WHERE room_type_id = ?) ORDER BY sort_order ASC, id ASC LIMIT 8');
+$stmt->execute([$id]);
+$photos = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
 require __DIR__ . '/../includes/header.php';
 ?>
 <h1><?= htmlspecialchars($roomType['name']) ?></h1>
@@ -52,6 +56,15 @@ require __DIR__ . '/../includes/header.php';
     <li><?= htmlspecialchars($a) ?></li>
 <?php endforeach; ?>
 </ul>
+<?php endif; ?>
+
+<?php if ($photos): ?>
+<h3>Photos</h3>
+<div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:0.75rem; margin-bottom:1.5rem;">
+    <?php foreach ($photos as $photo): ?>
+    <img src="<?= BASE_URL . htmlspecialchars($photo) ?>" style="width:100%; height:120px; object-fit:cover; border-radius:var(--radius); border:1px solid var(--color-border);">
+    <?php endforeach; ?>
+</div>
 <?php endif; ?>
 
 <a href="availability-check.php?room_type_id=<?= (int)$roomType['id'] ?>" class="cta">Check Availability</a>

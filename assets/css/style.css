@@ -256,8 +256,8 @@ button:active, .cta:active {
   display: flex;
   gap: 1rem;
   align-items: center;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
+  flex-wrap: nowrap;
   margin: 0 auto 2.5rem;
   padding: 1.5rem 2rem;
   background: var(--color-surface);
@@ -267,12 +267,21 @@ button:active, .cta:active {
   max-width: 900px;
 }
 
-.search-form label {
-  text-align: center;
+.search-row {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
 }
 
-.search-form button {
+.search-row button {
   margin: 0 auto;
+}
+
+.search-form label {
+  text-align: center;
 }
 
 .room-grid {
@@ -478,6 +487,15 @@ button:active, .cta:active {
 
   .search-form {
     padding: 1rem;
+  }
+
+  .search-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-row button {
+    width: 100%;
   }
 
   .room-grid {

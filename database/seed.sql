@@ -77,12 +77,6 @@ INSERT INTO coupons (code, discount_type, discount_value, max_uses, valid_from, 
 ('SAVE20', 'fixed', 20, 50, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 60 DAY), 1),
 ('SUMMER25', 'percentage', 25, 200, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 90 DAY), 1);
 
--- Sample reviews
-INSERT INTO reviews (booking_id, user_id, room_type_id, rating, comment) VALUES
-(1, 2, 2, 5, 'Amazing room with great view!'),
-(2, 3, 1, 4, 'Clean and comfortable, would stay again.'),
-(3, 2, 3, 5, 'Excellent service and spacious suite.');
-
 -- Sample activity log entries
 INSERT INTO activity_log (actor_user_id, actor_name, action, description) VALUES
 (NULL, 'System', 'system.init', 'Hotel booking system initialized with sample data'),
