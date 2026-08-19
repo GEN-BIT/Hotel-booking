@@ -28,13 +28,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 require __DIR__ . '/../includes/header.php';
 ?>
-<h1>Change Password</h1>
+<h1><?= trans('change_password') ?></h1>
 <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
 <?php if ($success): ?><p class="success"><?= htmlspecialchars($success) ?></p><?php endif; ?>
 <form method="post">
-    <label>Current Password <input type="password" name="current_password" required></label>
-    <label>New Password <input type="password" name="new_password" required></label>
-    <label>Confirm New Password <input type="password" name="confirm_password" required></label>
-    <button type="submit">Change Password</button>
+    <label><?= trans('current_password') ?> <input type="password" name="current_password" required></label>
+    <label><?= trans('new_password') ?> <input type="password" name="new_password" required></label>
+    <label><?= trans('confirm_new_password') ?> <input type="password" name="confirm_password" required></label>
+    <button type="submit"><?= trans('change_password') ?></button>
 </form>
 <?php require __DIR__ . '/../includes/footer.php'; ?>

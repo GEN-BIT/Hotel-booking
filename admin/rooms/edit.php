@@ -13,13 +13,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $number = trim($_POST['room_number'] ?? '');
     $typeId = (int)($_POST['room_type_id'] ?? 0);
     $floor  = trim($_POST['floor'] ?? '');
+    $building = trim($_POST['building'] ?? '');
     $status = $_POST['status'] ?? 'available';
+    $notes = trim($_POST['notes'] ?? '');
 
     if (!$number || !$typeId) {
         $error = 'Room number and type are required.';
     } else {
-        $stmt = $pdo->prepare('UPDATE rooms SET room_type_id=?, room_number=?, floor=?, status=? WHERE id=?');
-        $stmt->execute([$typeId, $number, $floor, $status, $id]);
+        $stmt = $pdo->prepare('UPDATE rooms SET room_type_id=?, room_number=?, floor=?, building=?, status=?, notes=? WHERE id=?');
+        $stmt->execute([$typeId, $number, $floor, $building, $status, $notes, $id]);
         header('Location: index.php');
         exit;
     }
@@ -37,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </select>
     </label>
     <label>Floor <input type="text" name="floor" value="<?= htmlspecialchars($room['floor']) ?>"></label>
+    <label>Building <input type="text" name="building" value="<?= htmlspecialchars($room['building'] ?? '') ?>"></label>
     <label>Status
         <select name="status">
             <?php foreach (['available','occupied','cleaning','maintenance'] as $s): ?>
@@ -44,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endforeach; ?>
         </select>
     </label>
+    <label>Notes <textarea name="notes"><?= htmlspecialchars($room['notes'] ?? '') ?></textarea></label>
     <p><a href="photos.php?room_id=<?= (int)$room['id'] ?>" class="cta">Manage Photos</a></p>
     <button type="submit">Save Changes</button>
 </form>

@@ -29,6 +29,10 @@ $stmt = $pdo->prepare('SELECT full_name FROM booking_guests WHERE booking_id = ?
 $stmt->execute([$bookingId]);
 $extraGuests = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
+$stmt = $pdo->prepare('SELECT bs.*, s.name AS service_name FROM booking_services bs JOIN services s ON bs.service_id = s.id WHERE bs.booking_id = ?');
+$stmt->execute([$bookingId]);
+$bookingServices = $stmt->fetchAll();
+
 require __DIR__ . '/../includes/header.php';
 ?>
 <style>
@@ -149,6 +153,12 @@ require __DIR__ . '/../includes/header.php';
         <tr><td>Subtotal (<?= (int)$nights ?> nights)</td><td>$<?= number_format($subtotal, 2) ?></td></tr>
         <?php if ($discount > 0): ?>
         <tr><td>Discount</td><td>-$<?= number_format($discount, 2) ?></td></tr>
+        <?php endif; ?>
+        <?php if ($bookingServices): ?>
+        <tr><td colspan="2"><strong>Extra Services</strong></td></tr>
+        <?php foreach ($bookingServices as $s): ?>
+        <tr><td><?= htmlspecialchars($s['service_name']) ?> x<?= (int)$s['quantity'] ?></td><td>$<?= number_format($s['subtotal'], 2) ?></td></tr>
+        <?php endforeach; ?>
         <?php endif; ?>
         <tr><td><strong>Total</strong></td><td><strong>$<?= number_format($total, 2) ?></strong></td></tr>
         <tr><td>Payment Status</td><td><?= htmlspecialchars($booking['payment_status'] ?? 'unpaid') ?></td></tr>

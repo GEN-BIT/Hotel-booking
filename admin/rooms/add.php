@@ -7,12 +7,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $number = trim($_POST['room_number'] ?? '');
     $typeId = (int)($_POST['room_type_id'] ?? 0);
     $floor  = trim($_POST['floor'] ?? '');
+    $building = trim($_POST['building'] ?? '');
+    $notes = trim($_POST['notes'] ?? '');
 
     if (!$number || !$typeId) {
         $error = 'Room number and type are required.';
     } else {
-        $stmt = $pdo->prepare('INSERT INTO rooms (room_type_id, room_number, floor, status) VALUES (?, ?, ?, "available")');
-        $stmt->execute([$typeId, $number, $floor]);
+        $stmt = $pdo->prepare('INSERT INTO rooms (room_type_id, room_number, floor, building, status, notes) VALUES (?, ?, ?, ?, "available", ?)');
+        $stmt->execute([$typeId, $number, $floor, $building, $notes]);
         header('Location: index.php');
         exit;
     }
@@ -31,6 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </select>
     </label>
     <label>Floor <input type="text" name="floor"></label>
+    <label>Building <input type="text" name="building"></label>
+    <label>Notes <textarea name="notes"></textarea></label>
     <button type="submit">Add Room</button>
 </form>
 <?php require __DIR__ . '/../../includes/admin-footer.php'; ?>

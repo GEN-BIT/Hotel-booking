@@ -98,6 +98,25 @@ a:hover { color: var(--color-accent); }
   padding: 0.4rem 0.6rem !important;
 }
 
+.language-select {
+  border: 1px solid rgba(255,255,255,0.2) !important;
+  background: rgba(255,255,255,0.1) !important;
+  color: var(--color-header-contrast) !important;
+  font-size: 0.85rem !important;
+  padding: 0.35rem 0.5rem !important;
+  cursor: pointer;
+  font-weight: 500 !important;
+  border-radius: 6px;
+  margin-left: 0.5rem;
+}
+
+.language-select option {
+  background: var(--color-surface) !important;
+  color: var(--color-text) !important;
+  font-weight: 500 !important;
+  padding: 0.4rem 0.6rem !important;
+}
+
 .site-main {
   max-width: 1100px;
   margin: 0 auto;

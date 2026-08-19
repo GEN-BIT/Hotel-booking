@@ -14,17 +14,17 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $bookings = $stmt->fetchAll();
 ?>
-<h1>Bookings</h1>
+<h1><?= trans('bookings') ?></h1>
 <form method="get" class="filter-form">
     <select name="status" onchange="this.form.submit()">
-        <option value="">All Statuses</option>
+        <option value=""><?= trans('all_statuses') ?></option>
         <?php foreach (['pending','confirmed','checked_in','checked_out','cancelled'] as $s): ?>
         <option value="<?= $s ?>" <?= $s === $statusFilter ? 'selected' : '' ?>><?= ucfirst(str_replace('_',' ',$s)) ?></option>
         <?php endforeach; ?>
     </select>
 </form>
 <table class="data-table">
-    <tr><th>Reference</th><th>Guest</th><th>Room</th><th>Dates</th><th>Status</th><th></th></tr>
+    <tr><th><?= trans('booking_reference') ?></th><th><?= trans('guest') ?></th><th><?= trans('room') ?></th><th><?= trans('dates') ?></th><th><?= trans('status') ?></th><th></th></tr>
     <?php foreach ($bookings as $b): ?>
     <tr>
         <td><?= htmlspecialchars($b['booking_reference']) ?></td>
@@ -32,7 +32,7 @@ $bookings = $stmt->fetchAll();
         <td><?= htmlspecialchars($b['room_number']) ?></td>
         <td><?= htmlspecialchars($b['check_in']) ?> &rarr; <?= htmlspecialchars($b['check_out']) ?></td>
         <td><span class="status status-<?= htmlspecialchars($b['status']) ?>"><?= htmlspecialchars($b['status']) ?></span></td>
-        <td><a href="view.php?id=<?= (int)$b['id'] ?>">Manage</a></td>
+        <td><a href="view.php?id=<?= (int)$b['id'] ?>"><?= trans('manage') ?></a></td>
     </tr>
     <?php endforeach; ?>
 </table>

@@ -15,13 +15,13 @@ $bookings = $stmt->fetchAll();
 
 require __DIR__ . '/../includes/header.php';
 ?>
-<h1>My Reservations</h1>
-<?php if (isset($_GET['reviewed'])): ?><p class="success">Thanks for your review!</p><?php endif; ?>
+<h1><?= trans('my_reservations') ?></h1>
+<?php if (isset($_GET['reviewed'])): ?><p class="success"><?= trans('thank_you_for_review') ?></p><?php endif; ?>
 <?php if (!$bookings): ?>
-    <p>You have no reservations yet. <a href="<?= BASE_URL ?>rooms/index.php">Browse rooms</a>.</p>
+    <p><?= trans('no_reservations_yet', ['url' => BASE_URL . 'rooms/index.php']) ?></p>
 <?php else: ?>
 <table class="data-table">
-    <tr><th>Reference</th><th>Room</th><th>Dates</th><th>Total</th><th>Status</th><th></th></tr>
+    <tr><th><?= trans('reference') ?></th><th><?= trans('room') ?></th><th><?= trans('date') ?></th><th><?= trans('total') ?></th><th><?= trans('status') ?></th><th></th></tr>
     <?php foreach ($bookings as $b): ?>
     <tr>
         <td><?= htmlspecialchars($b['booking_reference']) ?></td>
@@ -30,21 +30,21 @@ require __DIR__ . '/../includes/header.php';
         <td>$<?= number_format($b['total_price'], 2) ?></td>
         <td><span class="status status-<?= htmlspecialchars($b['status']) ?>"><?= htmlspecialchars($b['status']) ?></span></td>
         <td>
-            <a href="reservation-details.php?id=<?= (int)$b['id'] ?>">View</a>
+            <a href="reservation-details.php?id=<?= (int)$b['id'] ?>"><?= trans('view') ?></a>
             <?php if (in_array($b['status'], ['pending','confirmed'])): ?>
                 &nbsp;|&nbsp;
                 <form method="post" action="<?= BASE_URL ?>booking/cancel.php" style="display:inline"
-                      onsubmit="return confirm('Cancel this reservation?');">
+                      onsubmit="return confirm('<?= trans('cancel_reservation_confirm') ?>');">
                     <input type="hidden" name="booking_id" value="<?= (int)$b['id'] ?>">
-                    <button type="submit" class="link-btn">Cancel</button>
+                    <button type="submit" class="link-btn"><?= trans('cancel') ?></button>
                 </form>
             <?php endif; ?>
             <?php if ($b['status'] === 'checked_out'): ?>
                 &nbsp;|&nbsp;
                 <?php if ($b['review_id']): ?>
-                    <span class="stars">&#9733; Reviewed</span>
+                    <span class="stars">&#9733; <?= trans('reviewed') ?></span>
                 <?php else: ?>
-                    <a href="review.php?booking_id=<?= (int)$b['id'] ?>">Leave a Review</a>
+                    <a href="review.php?booking_id=<?= (int)$b['id'] ?>"><?= trans('leave_review') ?></a>
                 <?php endif; ?>
             <?php endif; ?>
         </td>

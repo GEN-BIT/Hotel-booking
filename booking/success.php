@@ -11,9 +11,9 @@ unset($_SESSION['last_booking_id']);
 
 require __DIR__ . '/../includes/header.php';
 ?>
-<h1>Booking Confirmed!</h1>
-<p>Your booking reference is: <strong><?= htmlspecialchars($reference) ?></strong></p>
-<p class="success">Payment received — thank you!</p>
-<p>You can view details anytime in your account.</p>
-<a href="<?= BASE_URL ?>account/reservations.php">View My Reservations</a>
+<h1><?= trans('booking_confirmed') ?></h1>
+<p><?= trans('your_booking_reference') ?> <strong><?= htmlspecialchars($reference) ?></strong></p>
+<p class="success"><?= trans('payment_received_thanks') ?></p>
+<p><?= trans('view_details_anytime') ?></p>
+<a href="<?= BASE_URL ?>account/reservations.php"><?= trans('view_my_reservations') ?></a>
 <?php require __DIR__ . '/../includes/footer.php'; ?>

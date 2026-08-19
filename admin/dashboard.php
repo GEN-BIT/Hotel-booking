@@ -52,63 +52,63 @@ $departures = $pdo->query(
      ORDER BY b.created_at ASC LIMIT 5'
 )->fetchAll();
 ?>
-<h1>Dashboard</h1>
+<h1><?= trans('dashboard') ?></h1>
 <div class="stat-grid">
-    <div class="stat-card"><h3><?= $stats['rooms'] ?></h3><p>Total Rooms</p></div>
-    <div class="stat-card"><h3><?= $stats['occupied'] ?></h3><p>Occupied Now</p></div>
-    <div class="stat-card"><h3><?= $stats['arrivals_today'] ?></h3><p>Arrivals Today</p></div>
-    <div class="stat-card"><h3><?= $stats['departures_today'] ?></h3><p>Departures Today</p></div>
-    <div class="stat-card"><h3><?= $stats['pending'] ?></h3><p>Pending Bookings</p></div>
-    <div class="stat-card"><h3>$<?= number_format($stats['revenue'], 2) ?></h3><p>Total Revenue</p></div>
+    <div class="stat-card"><h3><?= $stats['rooms'] ?></h3><p><?= trans('total_rooms') ?></p></div>
+    <div class="stat-card"><h3><?= $stats['occupied'] ?></h3><p><?= trans('occupied_now') ?></p></div>
+    <div class="stat-card"><h3><?= $stats['arrivals_today'] ?></h3><p><?= trans('arrivals_today') ?></p></div>
+    <div class="stat-card"><h3><?= $stats['departures_today'] ?></h3><p><?= trans('departures_today') ?></p></div>
+    <div class="stat-card"><h3><?= $stats['pending'] ?></h3><p><?= trans('pending_bookings') ?></p></div>
+    <div class="stat-card"><h3>$<?= number_format($stats['revenue'], 2) ?></h3><p><?= trans('total_revenue') ?></p></div>
 </div>
 
 <div class="chart-card">
-    <h3>Today's Arrivals</h3>
+    <h3><?= trans('arrivals_today') ?></h3>
     <?php if (!$arrivals): ?>
-        <p>No arrivals scheduled for today.</p>
+        <p><?= trans('no_arrivals_today') ?></p>
     <?php else: ?>
     <ul class="activity-log">
         <?php foreach ($arrivals as $a): ?>
         <li>
-            <strong><?= htmlspecialchars($a['full_name']) ?></strong> — <?= htmlspecialchars($a['type_name']) ?> Room <?= htmlspecialchars($a['room_number']) ?>
+            <strong><?= htmlspecialchars($a['full_name']) ?></strong> — <?= htmlspecialchars($a['type_name']) ?> <?= trans('room') ?> <?= htmlspecialchars($a['room_number']) ?>
             <div class="activity-time"><?= htmlspecialchars($a['booking_reference']) ?></div>
         </li>
         <?php endforeach; ?>
     </ul>
-    <a href="reports/arrivals.php" style="display:inline-block; margin-top:0.75rem;">View All Arrivals &rarr;</a>
+    <a href="reports/arrivals.php" style="display:inline-block; margin-top:0.75rem;"><?= trans('view_all_arrivals') ?> &rarr;</a>
     <?php endif; ?>
 </div>
 
 <div class="chart-card">
-    <h3>Today's Departures</h3>
+    <h3><?= trans('departures_today') ?></h3>
     <?php if (!$departures): ?>
-        <p>No departures scheduled for today.</p>
+        <p><?= trans('no_departures_today') ?></p>
     <?php else: ?>
     <ul class="activity-log">
         <?php foreach ($departures as $d): ?>
         <li>
-            <strong><?= htmlspecialchars($d['full_name']) ?></strong> — <?= htmlspecialchars($d['type_name']) ?> Room <?= htmlspecialchars($d['room_number']) ?>
+            <strong><?= htmlspecialchars($d['full_name']) ?></strong> — <?= htmlspecialchars($d['type_name']) ?> <?= trans('room') ?> <?= htmlspecialchars($d['room_number']) ?>
             <div class="activity-time"><?= htmlspecialchars($d['booking_reference']) ?></div>
         </li>
         <?php endforeach; ?>
     </ul>
-    <a href="reports/departures.php" style="display:inline-block; margin-top:0.75rem;">View All Departures &rarr;</a>
+    <a href="reports/departures.php" style="display:inline-block; margin-top:0.75rem;"><?= trans('view_all_departures') ?> &rarr;</a>
     <?php endif; ?>
 </div>
 
 <div class="chart-card">
-    <h3>Bookings — Last 14 Days</h3>
+    <h3><?= trans('bookings_last_14') ?></h3>
     <canvas id="bookingsChart" height="90"></canvas>
 </div>
 <div class="chart-card">
-    <h3>Revenue — Last 14 Days</h3>
+    <h3><?= trans('revenue_last_14') ?></h3>
     <canvas id="revenueChart" height="90"></canvas>
 </div>
 
 <div class="chart-card">
-    <h3>Recent Activity</h3>
+    <h3><?= trans('recent_activity') ?></h3>
     <?php if (!$recentActivity): ?>
-        <p>No activity recorded yet.</p>
+        <p><?= trans('no_activity_recorded') ?></p>
     <?php else: ?>
     <ul class="activity-log">
         <?php foreach ($recentActivity as $a): ?>
@@ -119,33 +119,36 @@ $departures = $pdo->query(
         <?php endforeach; ?>
     </ul>
     <?php endif; ?>
-    <a href="activity-log.php">View Full Activity Log &rarr;</a>
+    <a href="activity-log.php"><?= trans('view_full_activity_log') ?> &rarr;</a>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 (function() {
+    if (typeof Chart === 'undefined') return;
     var styles = getComputedStyle(document.documentElement);
     var primary = styles.getPropertyValue('--color-primary').trim();
     var accent = styles.getPropertyValue('--color-accent').trim();
 
-    new Chart(document.getElementById('bookingsChart'), {
-        type: 'line',
-        data: {
-            labels: <?= json_encode($chartLabels) ?>,
-            datasets: [{ label: 'Bookings', data: <?= json_encode($bookingValues) ?>, borderColor: primary, backgroundColor: 'transparent', tension: 0.3 }]
-        },
-        options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
-    });
+    try {
+        new Chart(document.getElementById('bookingsChart'), {
+            type: 'line',
+            data: {
+                labels: <?= json_encode($chartLabels) ?>,
+                datasets: [{ label: 'Bookings', data: <?= json_encode($bookingValues) ?>, borderColor: primary, backgroundColor: 'transparent', tension: 0.3 }]
+            },
+            options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+        });
 
-    new Chart(document.getElementById('revenueChart'), {
-        type: 'bar',
-        data: {
-            labels: <?= json_encode($chartLabels) ?>,
-            datasets: [{ label: 'Revenue', data: <?= json_encode($revenueValues) ?>, backgroundColor: accent }]
-        },
-        options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
-    });
+        new Chart(document.getElementById('revenueChart'), {
+            type: 'bar',
+            data: {
+                labels: <?= json_encode($chartLabels) ?>,
+                datasets: [{ label: 'Revenue', data: <?= json_encode($revenueValues) ?>, backgroundColor: accent }]
+            },
+            options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+        });
+    } catch (e) {}
 })();
 </script>
 <?php require __DIR__ . '/../includes/admin-footer.php'; ?>

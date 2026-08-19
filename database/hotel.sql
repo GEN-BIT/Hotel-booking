@@ -49,6 +49,9 @@ CREATE TABLE room_types (
     description TEXT,
     base_price DECIMAL(10,2) NOT NULL,
     max_occupancy INT NOT NULL DEFAULT 2,
+    bed_type VARCHAR(50),              -- King, Queen, Twin, etc.
+    room_size VARCHAR(50),             -- e.g. "35 m²", "380 ft²"
+    building VARCHAR(100),             -- Building A, Tower 1, etc.
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -57,7 +60,9 @@ CREATE TABLE rooms (
     room_type_id INT NOT NULL,
     room_number VARCHAR(20) NOT NULL UNIQUE,
     floor VARCHAR(20),
+    building VARCHAR(100),
     status ENUM('available','occupied','cleaning','maintenance') NOT NULL DEFAULT 'available',
+    notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (room_type_id) REFERENCES room_types(id)
 );
@@ -65,6 +70,7 @@ CREATE TABLE rooms (
 CREATE TABLE amenities (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE, -- Wi-Fi, Breakfast, Parking, AC
+    category VARCHAR(100),             -- Room Features, Bathroom, Entertainment, etc.
     icon VARCHAR(100)
 );
 
@@ -185,6 +191,52 @@ CREATE TABLE room_photos (
     sort_order INT NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE
+);
+
+-- ---------- Room Type Photos ----------
+
+CREATE TABLE room_type_photos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    room_type_id INT NOT NULL,
+    file_path VARCHAR(255) NOT NULL,
+    sort_order INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (room_type_id) REFERENCES room_types(id) ON DELETE CASCADE
+);
+
+-- ---------- Services / Add-ons ----------
+
+CREATE TABLE services (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    description TEXT,
+    price DECIMAL(10,2) NOT NULL DEFAULT 0,
+    is_active TINYINT(1) NOT NULL DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE booking_services (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    booking_id INT NOT NULL,
+    service_id INT NOT NULL,
+    quantity INT NOT NULL DEFAULT 1,
+    unit_price DECIMAL(10,2) NOT NULL,
+    subtotal DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE,
+    FOREIGN KEY (service_id) REFERENCES services(id)
+);
+
+-- ---------- Seasonal Pricing ----------
+
+CREATE TABLE room_type_pricing (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    room_type_id INT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    valid_from DATE NOT NULL,
+    valid_until DATE NOT NULL,
+    note VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (room_type_id) REFERENCES room_types(id) ON DELETE CASCADE
 );
 
 -- ---------- Seed roles ----------

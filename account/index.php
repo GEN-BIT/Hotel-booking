@@ -11,12 +11,12 @@ $unreadCount = (int)$stmt->fetchColumn();
 
 require __DIR__ . '/../includes/header.php';
 ?>
-<h1>Welcome, <?= htmlspecialchars($_SESSION['full_name']) ?></h1>
+<h1><?= trans('welcome_name', ['name' => htmlspecialchars($_SESSION['full_name'])]) ?></h1>
 <ul class="account-menu">
-    <li><a href="reservations.php">My Reservations</a> (<?= $upcomingCount ?> upcoming)</li>
-    <li><a href="invoices.php">Invoices</a></li>
-    <li><a href="notifications.php">Notifications</a> (<?= $unreadCount ?> unread)</li>
-    <li><a href="profile.php">Profile</a></li>
-    <li><a href="change-password.php">Change Password</a></li>
+    <li><a href="reservations.php"><?= trans('my_reservations') ?></a> (<?= $upcomingCount ?> <?= trans('upcoming') ?>)</li>
+    <li><a href="invoices.php"><?= trans('invoices') ?></a></li>
+    <li><a href="notifications.php"><?= trans('notifications_label') ?></a> (<?= $unreadCount ?> <?= trans('unread') ?>)</li>
+    <li><a href="profile.php"><?= trans('profile') ?></a></li>
+    <li><a href="change-password.php"><?= trans('change_password') ?></a></li>
 </ul>
 <?php require __DIR__ . '/../includes/footer.php'; ?>

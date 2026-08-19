@@ -1,6 +1,6 @@
 </main>
 <footer class="site-footer">
-    <p>&copy; <?= date('Y') ?> Hotel Booking System</p>
+    <p>&copy; <?= date('Y') ?> <?= trans('site_name') ?> — <?= trans('all_rights_reserved') ?></p>
 </footer>
 <script src="<?= BASE_URL ?>assets/js/theme.js"></script>
     <?php if (!empty($extraJS)): ?>

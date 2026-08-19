@@ -54,6 +54,18 @@ try {
         }
     }
 
+    if (!empty($pb['selected_services'])) {
+        $serviceIds = array_keys($pb['selected_services']);
+        $placeholders = implode(',', array_fill(0, count($serviceIds), '?'));
+        $stmt = $pdo->prepare("SELECT id, price FROM services WHERE id IN ($placeholders) AND is_active = 1");
+        $stmt->execute($serviceIds);
+        $activeServices = $stmt->fetchAll();
+        $bsstmt = $pdo->prepare('INSERT INTO booking_services (booking_id, service_id, quantity, unit_price, subtotal) VALUES (?, ?, 1, ?, ?)');
+        foreach ($activeServices as $s) {
+            $bsstmt->execute([$bookingId, $s['id'], $s['price'], $s['price']]);
+        }
+    }
+
     $pdo->commit();
     $logMsg = "Booking $reference created, {$pb['check_in']} to {$pb['check_out']}";
     if ($couponId) $logMsg .= " (coupon {$pb['coupon_code']} applied, -$" . number_format($discountAmount, 2) . ")";

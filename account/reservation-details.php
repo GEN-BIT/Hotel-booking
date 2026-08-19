@@ -26,6 +26,15 @@ $stmt = $pdo->prepare('SELECT * FROM payments WHERE booking_id = ? ORDER BY crea
 $stmt->execute([$id]);
 $payments = $stmt->fetchAll();
 
+$stmt = $pdo->prepare(
+    'SELECT so.*, s.name FROM service_orders so JOIN services s ON so.service_id = s.id
+     WHERE so.booking_id = ? ORDER BY so.created_at DESC'
+);
+$stmt->execute([$id]);
+$serviceOrders = $stmt->fetchAll();
+$servicesTotal = 0;
+foreach ($serviceOrders as $so) { $servicesTotal += $so['unit_price'] * $so['quantity']; }
+
 require __DIR__ . '/../includes/header.php';
 ?>
 <h1>Reservation <?= htmlspecialchars($booking['booking_reference']) ?></h1>
@@ -41,8 +50,30 @@ require __DIR__ . '/../includes/header.php';
 <?php if ($booking['discount_amount'] > 0): ?>
     <p>Coupon<?= $booking['coupon_code'] ? ' (' . htmlspecialchars($booking['coupon_code']) . ')' : '' ?> discount: -$<?= number_format($booking['discount_amount'], 2) ?></p>
 <?php endif; ?>
-<p class="price">Total: $<?= number_format($booking['total_price'], 2) ?></p>
+<p class="price">Room Total: $<?= number_format($booking['total_price'], 2) ?></p>
 <p>Status: <span class="status status-<?= htmlspecialchars($booking['status']) ?>"><?= htmlspecialchars($booking['status']) ?></span></p>
+
+<h3>Additional Services</h3>
+<?php if (isset($_GET['service_added'])): ?><p class="success">Service added!</p><?php endif; ?>
+<?php if (!$serviceOrders): ?>
+    <p>No services added yet.</p>
+<?php else: ?>
+<table class="data-table">
+    <tr><th>Service</th><th>Qty</th><th>Cost</th><th>Status</th></tr>
+    <?php foreach ($serviceOrders as $so): ?>
+    <tr>
+        <td><?= htmlspecialchars($so['name']) ?></td>
+        <td><?= (int)$so['quantity'] ?></td>
+        <td>$<?= number_format($so['unit_price'] * $so['quantity'], 2) ?></td>
+        <td><?= htmlspecialchars($so['status']) ?></td>
+    </tr>
+    <?php endforeach; ?>
+</table>
+<p>Services subtotal: $<?= number_format($servicesTotal, 2) ?></p>
+<?php endif; ?>
+<?php if (in_array($booking['status'], ['pending','confirmed','checked_in'])): ?>
+<a href="add-service.php?booking_id=<?= $id ?>" class="cta">+ Add a Service</a>
+<?php endif; ?>
 
 <h3>Payments</h3>
 <?php if (!$payments): ?>

@@ -35,13 +35,13 @@ if (isset($_GET['coupon'])) {
         $coupon = $cstmt->fetch();
 
         if (!$coupon || !$coupon['is_active']) {
-            $couponError = 'Invalid or inactive coupon code.';
+            $couponError = trans('coupon_invalid_or_inactive');
         } elseif ($coupon['valid_from'] && $coupon['valid_from'] > date('Y-m-d')) {
-            $couponError = 'This coupon is not active yet.';
+            $couponError = trans('coupon_not_active_yet');
         } elseif ($coupon['valid_until'] && $coupon['valid_until'] < date('Y-m-d')) {
-            $couponError = 'This coupon has expired.';
+            $couponError = trans('coupon_expired');
         } elseif ($coupon['max_uses'] !== null && $coupon['times_used'] >= $coupon['max_uses']) {
-            $couponError = 'This coupon has reached its usage limit.';
+            $couponError = trans('coupon_usage_limit');
         } else {
             $pb['coupon_code'] = $code;
         }
@@ -68,7 +68,20 @@ if (!empty($pb['coupon_code'])) {
     }
 }
 
-$total = max(0, $subtotal - $discount);
+$servicesTotal = 0;
+$selectedServices = [];
+if (!empty($pb['selected_services'])) {
+    $serviceIds = array_keys($pb['selected_services']);
+    $placeholders = implode(',', array_fill(0, count($serviceIds), '?'));
+    $stmt = $pdo->prepare("SELECT * FROM services WHERE id IN ($placeholders) AND is_active = 1");
+    $stmt->execute($serviceIds);
+    $selectedServices = $stmt->fetchAll();
+    foreach ($selectedServices as $s) {
+        $servicesTotal += $s['price'];
+    }
+}
+
+$total = max(0, $subtotal - $discount + $servicesTotal);
 $pb['total_price'] = $total;
 $pb['discount_amount'] = $discount;
 $pb['coupon_id'] = $appliedCoupon['id'] ?? null;
@@ -76,35 +89,45 @@ $_SESSION['pending_booking'] = $pb;
 
 require __DIR__ . '/../includes/header.php';
 ?>
-<h1>Review Your Booking</h1>
+<h1><?= trans('review_your_booking') ?></h1>
 <?php if ($conflict): ?>
-    <p class="error">Sorry, this room was just booked by someone else. Please search again.</p>
-    <a href="<?= BASE_URL ?>rooms/index.php">Back to Rooms</a>
+    <p class="error"><?= trans('room_no_longer_available') ?></p>
+    <a href="<?= BASE_URL ?>rooms/index.php"><?= trans('back_to_rooms') ?></a>
 <?php else: ?>
-    <p><strong><?= htmlspecialchars($room['type_name']) ?></strong> — Room <?= htmlspecialchars($room['room_number']) ?></p>
-    <p><?= htmlspecialchars($pb['check_in']) ?> &rarr; <?= htmlspecialchars($pb['check_out']) ?> (<?= $nights ?> nights)</p>
-    <p>Guests: <?= (int)$pb['guests'] ?></p>
+    <p><strong><?= htmlspecialchars($room['type_name']) ?></strong> — <?= trans('room') ?> <?= htmlspecialchars($room['room_number']) ?></p>
+    <p><?= htmlspecialchars($pb['check_in']) ?> &rarr; <?= htmlspecialchars($pb['check_out']) ?> (<?= $nights ?> <?= trans('nights') ?>)</p>
+    <p><?= trans('guests_label') ?> <?= (int)$pb['guests'] ?></p>
     <?php if (!empty($pb['special_requests'])): ?>
-        <p>Requests: <?= htmlspecialchars($pb['special_requests']) ?></p>
+        <p><?= trans('requests_label') ?> <?= htmlspecialchars($pb['special_requests']) ?></p>
     <?php endif; ?>
 
-    <p>Subtotal: $<?= number_format($subtotal, 2) ?></p>
+    <p><?= trans('room_subtotal') ?> $<?= number_format($subtotal, 2) ?></p>
+
+    <?php if ($selectedServices): ?>
+        <h3><?= trans('extra_services') ?></h3>
+        <ul>
+            <?php foreach ($selectedServices as $s): ?>
+                <li><?= htmlspecialchars($s['name']) ?> — $<?= number_format($s['price'], 2) ?></li>
+            <?php endforeach; ?>
+        </ul>
+        <p><?= trans('services_total') ?> $<?= number_format($servicesTotal, 2) ?></p>
+    <?php endif; ?>
 
     <?php if ($couponError): ?><p class="error"><?= htmlspecialchars($couponError) ?></p><?php endif; ?>
 
     <?php if ($appliedCoupon): ?>
-        <p class="success">Coupon "<?= htmlspecialchars($appliedCoupon['code']) ?>" applied: -$<?= number_format($discount, 2) ?>
-        &nbsp;<a href="?remove_coupon=1">Remove</a></p>
+        <p class="success"><?= trans('coupon_applied_success', ['code' => htmlspecialchars($appliedCoupon['code']), 'discount' => number_format($discount, 2)]) ?>
+        &nbsp;<a href="?remove_coupon=1"><?= trans('remove') ?></a></p>
     <?php else: ?>
         <form method="get" class="coupon-form">
-            <label>Coupon Code <input type="text" name="coupon" placeholder="Enter code"></label>
-            <button type="submit">Apply</button>
+            <label><?= trans('coupon_code_label') ?> <input type="text" name="coupon" placeholder="<?= trans('enter_code_placeholder') ?>"></label>
+            <button type="submit"><?= trans('apply') ?></button>
         </form>
     <?php endif; ?>
 
-    <p class="price">Total: $<?= number_format($total, 2) ?></p>
+    <p class="price"><?= trans('total_price_label') ?> $<?= number_format($total, 2) ?></p>
     <form method="post" action="confirm.php">
-        <button type="submit">Confirm Booking</button>
+        <button type="submit"><?= trans('confirm_booking') ?></button>
     </form>
 <?php endif; ?>
 <?php require __DIR__ . '/../includes/footer.php'; ?>

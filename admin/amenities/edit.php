@@ -8,12 +8,13 @@ $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
+    $category = trim($_POST['category'] ?? '');
     $icon = trim($_POST['icon'] ?? '');
     if (!$name) {
         $error = 'Name is required.';
     } else {
-        $stmt = $pdo->prepare('UPDATE amenities SET name=?, icon=? WHERE id=?');
-        $stmt->execute([$name, $icon, $id]);
+        $stmt = $pdo->prepare('UPDATE amenities SET name=?, category=?, icon=? WHERE id=?');
+        $stmt->execute([$name, $category, $icon, $id]);
         header('Location: index.php');
         exit;
     }
@@ -23,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
 <form method="post">
     <label>Name <input type="text" name="name" value="<?= htmlspecialchars($amenity['name']) ?>" required></label>
+    <label>Category <input type="text" name="category" value="<?= htmlspecialchars($amenity['category'] ?? '') ?>"></label>
     <label>Icon <input type="text" name="icon" value="<?= htmlspecialchars($amenity['icon']) ?>"></label>
     <button type="submit">Save Changes</button>
 </form>

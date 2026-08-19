@@ -20,18 +20,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $role = $_POST['role'] ?? 'guest';
 
         if (!$name || !$email || !$password) {
-            $error = 'Please fill in all required fields.';
+            $error = trans('please_fill_required_fields');
         } elseif (!in_array($role, ['guest', 'staff'])) {
-            $error = 'Invalid role selected.';
+            $error = trans('invalid_role_selected');
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $error = 'Invalid email address.';
+            $error = trans('invalid_email_address');
         } elseif (strlen($password) < 8) {
-            $error = 'Password must be at least 8 characters.';
+            $error = trans('password_at_least_8');
         } else {
             $stmt = $pdo->prepare('SELECT id FROM users WHERE email = ?');
             $stmt->execute([$email]);
             if ($stmt->fetch()) {
-                $error = 'An account with that email already exists.';
+                $error = trans('account_email_exists');
             } else {
                 $hash = password_hash($password, PASSWORD_DEFAULT);
                 $token = bin2hex(random_bytes(32));
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 if ($role === 'guest') {
                     $link = BASE_URL . 'auth/verify.php?token=' . $token;
-                    $sent = send_mail($pdo, $email, 'Verify your account',
+                    $sent = send_mail($pdo, $email, trans('verify_your_account'),
                         "Hi $name,<br><br>Please verify your account by clicking the link below:<br>
                          <a href=\"$link\">$link</a>");
 
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$email]);
         $user = $stmt->fetch();
 
-        $success = 'If an account exists for that email, a reset link has been sent.';
+        $success = trans('forgot_success_msg');
 
         if ($user) {
             $token = bin2hex(random_bytes(32));
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $password = $_POST['password'] ?? '';
 
         $stmt = $pdo->prepare(
-            'SELECT u.id, u.full_name, u.password_hash, u.is_verified, r.name AS role
+            'SELECT u.id, u.full_name, u.password_hash, u.is_verified, u.approval_status, r.name AS role
              FROM users u JOIN roles r ON u.role_id = r.id
              WHERE u.email = ?'
         );
@@ -99,11 +99,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($user && password_verify($password, $user['password_hash'])) {
             if (!$user['is_verified']) {
-                $error = 'Please verify your email before logging in. Check your inbox for the verification link.';
+                $error = trans('please_verify_email');
             } elseif ($user['approval_status'] === 'pending') {
-                $error = 'Your account is pending approval. Please wait for an administrator to approve your account.';
+                $error = trans('account_pending_approval');
             } elseif ($user['approval_status'] === 'rejected') {
-                $error = 'Your account has been rejected. Please contact support for more information.';
+                $error = trans('account_rejected');
             } else {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['full_name'] = $user['full_name'];
@@ -117,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
         } else {
-            $error = 'Invalid email or password.';
+            $error = trans('invalid_email_or_password');
         }
     }
 }
@@ -130,55 +130,55 @@ require __DIR__ . '/../includes/header.php';
     <div class="auth-slider" id="authSlider">
 
       <div class="auth-panel <?= $mode === 'login' ? 'active' : '' ?>" id="loginPanel">
-        <h2>Welcome Back</h2>
-        <p class="auth-subtitle">Sign in to continue your stay</p>
+        <h2><?= trans('welcome_back') ?></h2>
+        <p class="auth-subtitle"><?= trans('sign_in_to_continue') ?></p>
         <?php if (isset($_GET['registered'])): ?>
-          <p class="success">Account created — please log in.</p>
+          <p class="success"><?= trans('account_created_please_login') ?></p>
         <?php endif; ?>
         <?php if ($error && $mode === 'login'): ?>
           <p class="error"><?= htmlspecialchars($error) ?></p>
         <?php endif; ?>
         <form method="post">
           <input type="hidden" name="form_type" value="login">
-          <label>Email <input type="email" name="email" required autofocus></label>
-          <label>Password <input type="password" name="password" required></label>
-          <button type="submit">Sign In</button>
+          <label><?= trans('email') ?> <input type="email" name="email" required autofocus></label>
+          <label><?= trans('password') ?> <input type="password" name="password" required></label>
+          <button type="submit"><?= trans('sign_in_button') ?></button>
         </form>
         <div class="auth-switch">
-          <p><a onclick="showForgot()">Forgot password?</a></p>
-          <p>No account? <a onclick="showPanel('registerPanel')">Create account</a></p>
+          <p><a onclick="showForgot()"><?= trans('forgot_password') ?></a></p>
+          <p><?= trans('no_account') ?> <a onclick="showPanel('registerPanel')"><?= trans('create_account') ?></a></p>
         </div>
       </div>
 
       <div class="auth-panel <?= $mode === 'register' ? 'active' : '' ?>" id="registerPanel">
-        <h2>Create Account</h2>
-        <p class="auth-subtitle">Join us for a luxurious experience</p>
+        <h2><?= trans('create_account') ?></h2>
+        <p class="auth-subtitle"><?= trans('join_us_for_luxury') ?></p>
         <?php if ($error && $mode === 'register'): ?>
           <p class="error"><?= htmlspecialchars($error) ?></p>
         <?php endif; ?>
         <?php if ($success && $mode === 'register'): ?>
           <p class="success"><?= htmlspecialchars($success) ?></p>
           <?php if ($devLink): ?>
-            <p class="notice">Email sending isn't configured yet, so here's your verification link directly (dev mode only):<br>
+            <p class="notice"><?= trans('email_sending_not_configured') ?><br>
             <a href="<?= htmlspecialchars($devLink) ?>"><?= htmlspecialchars($devLink) ?></a></p>
           <?php endif; ?>
         <?php else: ?>
         <form method="post">
           <input type="hidden" name="form_type" value="register">
-          <label>Full Name <input type="text" name="full_name" required></label>
-          <label>Email <input type="email" name="email" required></label>
-          <label>Phone <input type="text" name="phone"></label>
-          <label>Password <input type="password" name="password" required></label>
-          <label>Register As
+          <label><?= trans('full_name') ?> <input type="text" name="full_name" required></label>
+          <label><?= trans('email') ?> <input type="email" name="email" required></label>
+          <label><?= trans('phone') ?> <input type="text" name="phone"></label>
+          <label><?= trans('password') ?> <input type="password" name="password" required></label>
+          <label><?= trans('register_as') ?>
             <select name="role" required>
-              <option value="guest">Guest</option>
-              <option value="staff">Staff</option>
+              <option value="guest"><?= trans('guest') ?></option>
+              <option value="staff"><?= trans('staff') ?></option>
             </select>
           </label>
-          <button type="submit">Create Account</button>
+          <button type="submit"><?= trans('create_account_button') ?></button>
         </form>
         <div class="auth-switch">
-          <p>Already have an account? <a onclick="showPanel('loginPanel')">Login here</a></p>
+          <p><?= trans('already_have_account') ?> <a onclick="showPanel('loginPanel')"><?= trans('login_here') ?></a></p>
         </div>
         <?php endif; ?>
       </div>
@@ -186,12 +186,12 @@ require __DIR__ . '/../includes/header.php';
     </div>
 
     <div class="auth-forgot <?= $mode === 'forgot' ? 'active' : '' ?>" id="forgotOverlay">
-      <h2>Reset Password</h2>
-      <p class="auth-subtitle">We'll send you a reset link</p>
+      <h2><?= trans('reset_password') ?></h2>
+      <p class="auth-subtitle"><?= trans('we_will_send_reset_link') ?></p>
       <?php if ($success && $mode === 'forgot'): ?>
         <p class="success"><?= htmlspecialchars($success) ?></p>
         <?php if ($devLink): ?>
-          <p class="notice">Email sending isn't configured yet, so here's your reset link directly (dev mode only):<br>
+          <p class="notice"><?= trans('email_sending_not_configured') ?><br>
           <a href="<?= htmlspecialchars($devLink) ?>"><?= htmlspecialchars($devLink) ?></a></p>
         <?php endif; ?>
       <?php else: ?>
@@ -200,12 +200,12 @@ require __DIR__ . '/../includes/header.php';
         <?php endif; ?>
         <form method="post">
           <input type="hidden" name="form_type" value="forgot">
-          <label>Email <input type="email" name="email" required autofocus></label>
-          <button type="submit">Send Reset Link</button>
+          <label><?= trans('email') ?> <input type="email" name="email" required autofocus></label>
+          <button type="submit"><?= trans('send_reset_link') ?></button>
         </form>
       <?php endif; ?>
       <div class="auth-switch">
-        <p><a onclick="hideForgot()">Back to login</a></p>
+        <p><a onclick="hideForgot()"><?= trans('back_to_login') ?></a></p>
       </div>
     </div>
 

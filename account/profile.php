@@ -13,9 +13,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone = trim($_POST['phone'] ?? '');
 
     if (!$name || !$email) {
-        $error = 'Full name and email are required.';
+        $error = trans('please_fill_required_fields');
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = 'Invalid email address.';
+        $error = trans('invalid_email_address');
     } else {
         $stmt = $pdo->prepare('UPDATE users SET full_name = ?, email = ?, phone = ? WHERE id = ?');
         $stmt->execute([$name, $email, $phone, $_SESSION['user_id']]);
@@ -23,19 +23,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user['full_name'] = $name;
         $user['email'] = $email;
         $user['phone'] = $phone;
-        $success = 'Profile updated.';
+        $success = trans('profile_updated');
     }
 }
 
 require __DIR__ . '/../includes/header.php';
 ?>
-<h1>My Profile</h1>
+<h1><?= trans('my_profile') ?></h1>
 <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
 <?php if ($success): ?><p class="success"><?= htmlspecialchars($success) ?></p><?php endif; ?>
 <form method="post">
-    <label>Full Name <input type="text" name="full_name" value="<?= htmlspecialchars($user['full_name']) ?>" required></label>
-    <label>Email <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" required></label>
-    <label>Phone <input type="text" name="phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>"></label>
-    <button type="submit">Save Changes</button>
+    <label><?= trans('full_name') ?> <input type="text" name="full_name" value="<?= htmlspecialchars($user['full_name']) ?>" required></label>
+    <label><?= trans('email') ?> <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" required></label>
+    <label><?= trans('phone') ?> <input type="text" name="phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>"></label>
+    <button type="submit"><?= trans('save_changes') ?></button>
 </form>
 <?php require __DIR__ . '/../includes/footer.php'; ?>
