@@ -23,42 +23,22 @@
   --font-body: 'Inter', system-ui, sans-serif;
 }
 
-[data-theme="vibrant"] {
-  --color-bg: #fff7ef;
-  --color-surface: #ffffff;
-  --color-header: #ff5a5f;
-  --color-header-contrast: #ffffff;
-  --color-primary: #ff5a5f;
-  --color-primary-contrast: #ffffff;
-  --color-accent: #00c2a8;
-  --color-text: #232323;
-  --color-muted: #706a63;
-  --color-border: #ffe1c9;
-  --color-success-bg: #dff7ef; --color-success-text: #0d7a5f;
-  --color-error-bg: #ffe3e1;   --color-error-text: #b3272c;
-  --color-warning-bg: #fff1d6; --color-warning-text: #8a5a00;
-  --radius: 16px;
-  --shadow: 0 6px 18px rgba(255, 90, 95, 0.15);
-  --font-heading: 'Poppins', system-ui, sans-serif;
-  --font-body: 'Poppins', system-ui, sans-serif;
-}
-
 [data-theme="dark"] {
   --color-bg: #0f1420;
-  --color-surface: #161d2e;
+  --color-surface: #1a1f2e;
   --color-header: #0b0f19;
-  --color-header-contrast: #e6e9f0;
-  --color-primary: #4f8cff;
-  --color-primary-contrast: #0b0f19;
-  --color-accent: #4f8cff;
+  --color-header-contrast: #f0f2f5;
+  --color-primary: #d4af37;
+  --color-primary-contrast: #ffffff;
+  --color-accent: #f0c040;
   --color-text: #e6e9f0;
-  --color-muted: #9aa4b8;
-  --color-border: #232b3e;
+  --color-muted: #b0b8c4;
+  --color-border: #2a3040;
   --color-success-bg: #12321f; --color-success-text: #7fe0a0;
   --color-error-bg: #3a1620;   --color-error-text: #ff8a93;
   --color-warning-bg: #332612; --color-warning-text: #f0c674;
-  --radius: 8px;
+  --radius: 10px;
   --shadow: 0 4px 16px rgba(0,0,0,0.4);
-  --font-heading: 'Inter', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
+  --font-heading: 'Poppins', system-ui, sans-serif;
+  --font-body: 'Poppins', system-ui, sans-serif;
 }

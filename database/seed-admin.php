@@ -22,8 +22,8 @@ $hash = password_hash($password, PASSWORD_DEFAULT);
 
 $pdo->beginTransaction();
 $stmt = $pdo->prepare(
-    'INSERT INTO users (role_id, full_name, email, password_hash, is_verified)
-     VALUES ((SELECT id FROM roles WHERE name = "admin"), ?, ?, ?, 1)'
+    'INSERT INTO users (role_id, full_name, email, password_hash, is_verified, approval_status)
+     VALUES ((SELECT id FROM roles WHERE name = "admin"), ?, ?, ?, 1, "approved")'
 );
 $stmt->execute([$name, $email, $hash]);
 $userId = $pdo->lastInsertId();

@@ -24,6 +24,7 @@ CREATE TABLE users (
     verification_token VARCHAR(255),
     reset_token VARCHAR(255),
     reset_token_expires DATETIME,
+    approval_status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'approved',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (role_id) REFERENCES roles(id)

@@ -58,6 +58,7 @@ a:hover { color: var(--color-accent); }
   border-radius: 8px;
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.1);
+  color: #ffffff;
 }
 
 .logo:hover {
@@ -147,6 +148,7 @@ a:hover { color: var(--color-accent); }
   position: relative;
   border: none;
   padding: 0;
+  color: #ffffff;
 }
 
 .hero p {
@@ -154,6 +156,7 @@ a:hover { color: var(--color-accent); }
   opacity: 0.95;
   font-size: 1.1rem;
   position: relative;
+  color: #ffffff;
 }
 
 form {

@@ -9,6 +9,7 @@
   function init() {
     var select = document.getElementById('theme-select');
     var saved = localStorage.getItem(STORAGE_KEY) || DEFAULT_THEME;
+    if (saved === 'vibrant' || saved === 'minimalist') saved = 'dark';
     applyTheme(saved);
     if (select) {
       select.value = saved;

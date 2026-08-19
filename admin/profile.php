@@ -1,5 +1,5 @@
 <?php require_once __DIR__ . '/../config/config.php';
-require_login();
+require_role_any(['admin', 'staff']);
 
 $error = ''; $success = '';
 
@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-require __DIR__ . '/../includes/header.php';
+require __DIR__ . '/../includes/admin-header.php';
 ?>
 <h1>My Profile</h1>
 <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
@@ -38,4 +38,4 @@ require __DIR__ . '/../includes/header.php';
     <label>Phone <input type="text" name="phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>"></label>
     <button type="submit">Save Changes</button>
 </form>
-<?php require __DIR__ . '/../includes/footer.php'; ?>
+<?php require __DIR__ . '/../includes/admin-footer.php'; ?>

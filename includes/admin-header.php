@@ -35,6 +35,7 @@ require_role_any(['admin', 'staff']);
         <a href="<?= BASE_URL ?>admin/payments/index.php">Payments</a>
         <a href="<?= BASE_URL ?>admin/coupons/index.php">Coupons</a>
         <a href="<?= BASE_URL ?>admin/reviews/index.php">Reviews</a>
+        <a href="<?= BASE_URL ?>admin/notifications/index.php">Notifications</a>
         <a href="<?= BASE_URL ?>admin/reports/occupancy.php">Occupancy</a>
         <a href="<?= BASE_URL ?>admin/reports/revenue.php">Revenue</a>
         <a href="<?= BASE_URL ?>admin/reports/arrivals.php">Arrivals</a>
@@ -43,16 +44,20 @@ require_role_any(['admin', 'staff']);
         <a href="<?= BASE_URL ?>admin/reports/cancellations.php">Cancellations</a>
         <a href="<?= BASE_URL ?>admin/activity-log.php">Activity Log</a>
         <?php if (current_role() === 'admin'): ?>
-        <a href="<?= BASE_URL ?>admin/staff/index.php">Staff</a>
+        <?php
+        $pendingCount = (int)$pdo->query('SELECT COUNT(*) FROM users u JOIN roles r ON u.role_id = r.id WHERE r.name IN ("staff","admin") AND u.approval_status = "pending"')->fetchColumn();
+        $staffLabel = 'Staff' . ($pendingCount > 0 ? ' <span style="color:#ff8a93;">(' . $pendingCount . ')</span>' : '');
+        ?>
+        <a href="<?= BASE_URL ?>admin/staff/index.php"><?= $staffLabel ?></a>
         <a href="<?= BASE_URL ?>admin/settings/index.php">Settings</a>
         <?php endif; ?>
         <a href="<?= BASE_URL ?>admin/change-password.php">Change Password</a>
+        <a href="<?= BASE_URL ?>admin/profile.php">My Profile</a>
         <a href="<?= BASE_URL ?>auth/logout.php">Logout</a>
     </nav>
         <div class="theme-switcher">
             <select id="theme-select" class="theme-select" aria-label="Theme">
                 <option value="luxury">Luxury</option>
-                <option value="vibrant">Vibrant</option>
                 <option value="dark">Dark</option>
             </select>
         </div>

@@ -37,7 +37,6 @@
             <div class="theme-switcher">
                 <select id="theme-select" class="theme-select" aria-label="Theme">
                     <option value="luxury">Luxury</option>
-                    <option value="vibrant">Vibrant</option>
                     <option value="dark">Dark</option>
                 </select>
             </div>

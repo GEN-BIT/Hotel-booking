@@ -17,9 +17,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $email = trim($_POST['email'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
         $password = $_POST['password'] ?? '';
+        $role = $_POST['role'] ?? 'guest';
 
         if (!$name || !$email || !$password) {
             $error = 'Please fill in all required fields.';
+        } elseif (!in_array($role, ['guest', 'staff'])) {
+            $error = 'Invalid role selected.';
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $error = 'Invalid email address.';
         } elseif (strlen($password) < 8) {
@@ -32,22 +35,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $hash = password_hash($password, PASSWORD_DEFAULT);
                 $token = bin2hex(random_bytes(32));
+                $roleId = $pdo->prepare('SELECT id FROM roles WHERE name = ?')->execute([$role]) ? $pdo->fetchColumn() : $pdo->prepare('SELECT id FROM roles WHERE name = "guest"')->fetchColumn();
+                $approvalStatus = ($role === 'staff' || $role === 'admin') ? 'pending' : 'approved';
 
                 $stmt = $pdo->prepare(
-                    'INSERT INTO users (role_id, full_name, email, phone, password_hash, is_verified, verification_token)
-                     VALUES ((SELECT id FROM roles WHERE name = "guest"), ?, ?, ?, ?, 0, ?)'
+                    'INSERT INTO users (role_id, full_name, email, phone, password_hash, is_verified, verification_token, approval_status)
+                     VALUES (?, ?, ?, ?, ?, 0, ?, ?)'
                 );
-                $stmt->execute([$name, $email, $phone, $hash, $token]);
+                $stmt->execute([$roleId, $name, $email, $phone, $hash, $token, $approvalStatus]);
 
-                $link = BASE_URL . 'auth/verify.php?token=' . $token;
-                $sent = send_mail($pdo, $email, 'Verify your account',
-                    "Hi $name,<br><br>Please verify your account by clicking the link below:<br>
-                     <a href=\"$link\">$link</a>");
+                if ($role === 'guest') {
+                    $link = BASE_URL . 'auth/verify.php?token=' . $token;
+                    $sent = send_mail($pdo, $email, 'Verify your account',
+                        "Hi $name,<br><br>Please verify your account by clicking the link below:<br>
+                         <a href=\"$link\">$link</a>");
 
-                if (!$sent) {
-                    $devLink = $link;
+                    if (!$sent) {
+                        $devLink = $link;
+                    } else {
+                        header('Location: ' . BASE_URL . 'auth/login.php?registered=1');
+                        exit;
+                    }
                 } else {
-                    header('Location: ' . BASE_URL . 'auth/login.php?registered=1');
+                    header('Location: ' . BASE_URL . 'auth/login.php?registered=1&pending=1');
                     exit;
                 }
             }
@@ -90,6 +100,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($user && password_verify($password, $user['password_hash'])) {
             if (!$user['is_verified']) {
                 $error = 'Please verify your email before logging in. Check your inbox for the verification link.';
+            } elseif ($user['approval_status'] === 'pending') {
+                $error = 'Your account is pending approval. Please wait for an administrator to approve your account.';
+            } elseif ($user['approval_status'] === 'rejected') {
+                $error = 'Your account has been rejected. Please contact support for more information.';
             } else {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['full_name'] = $user['full_name'];
@@ -155,6 +169,12 @@ require __DIR__ . '/../includes/header.php';
           <label>Email <input type="email" name="email" required></label>
           <label>Phone <input type="text" name="phone"></label>
           <label>Password <input type="password" name="password" required></label>
+          <label>Register As
+            <select name="role" required>
+              <option value="guest">Guest</option>
+              <option value="staff">Staff</option>
+            </select>
+          </label>
           <button type="submit">Create Account</button>
         </form>
         <div class="auth-switch">

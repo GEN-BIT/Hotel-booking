@@ -84,3 +84,14 @@ INSERT INTO activity_log (actor_user_id, actor_name, action, description) VALUES
 (2, 'John Doe', 'booking.created', 'Booking HB-20240101-A1B2C created for Deluxe Room 201'),
 (3, 'Jane Smith', 'booking.created', 'Booking HB-20240102-D4E5F created for Standard Room 101'),
 (2, 'John Doe', 'review.created', 'Review submitted for Deluxe Room');
+
+-- Sample users with different roles
+INSERT INTO users (role_id, full_name, email, password_hash, is_verified, approval_status) VALUES
+((SELECT id FROM roles WHERE name = 'admin'), 'Admin User', 'admin@hotel-booking.local', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1, 'approved'),
+((SELECT id FROM roles WHERE name = 'staff'), 'Staff User', 'staff@hotel-booking.local', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1, 'approved'),
+((SELECT id FROM roles WHERE name = 'guest'), 'Guest User', 'guest@hotel-booking.local', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1, 'approved');
+
+-- Sample staff records
+INSERT INTO staff (user_id, position, is_active) VALUES
+(2, 'Front Desk Manager', 1),
+(3, 'Housekeeping Supervisor', 1);
