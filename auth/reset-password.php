@@ -12,7 +12,7 @@ $user = $stmt->fetch();
 if (!$user || $user['reset_token_expires'] < date('Y-m-d H:i:s')) {
     require __DIR__ . '/../includes/header.php';
     echo '<h1>Invalid Link</h1><p class="error">This reset link is invalid or has expired.</p>
-          <a href="forgot-password.php">Request a new link</a>';
+          <a href="login.php?mode=forgot">Request a new link</a>';
     require __DIR__ . '/../includes/footer.php';
     exit;
 }
