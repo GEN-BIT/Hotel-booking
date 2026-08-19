@@ -1,5 +1,7 @@
 <?php require_once __DIR__ . '/../config/config.php';
 
+$extraCSS = [BASE_URL . 'assets/css/auth.css'];
+
 $token = $_GET['token'] ?? '';
 if (!$token) die('Invalid verification link.');
 
@@ -8,13 +10,28 @@ $stmt->execute([$token]);
 $user = $stmt->fetch();
 
 require __DIR__ . '/../includes/header.php';
+?>
 
-if (!$user) {
-    echo '<h1>Verification Failed</h1><p class="error">Invalid or expired verification link.</p>';
-} else {
-    $stmt = $pdo->prepare('UPDATE users SET is_verified = 1, verification_token = NULL WHERE id = ?');
-    $stmt->execute([$user['id']]);
-    echo '<h1>Email Verified</h1><p class="success">Your account is now verified. You can log in.</p>
-          <a href="login.php">Go to Login</a>';
-}
-require __DIR__ . '/../includes/footer.php';
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-panel active" style="width:100%">
+      <?php if (!$user): ?>
+        <h2>Verification Failed</h2>
+        <p class="auth-subtitle">Invalid or expired verification link.</p>
+        <p class="error">Invalid or expired verification link.</p>
+        <a href="login.php" class="cta" style="text-align:center; margin-top:1rem;">Go to Login</a>
+      <?php else: ?>
+        <h2>Email Verified</h2>
+        <p class="auth-subtitle">Your account is now verified</p>
+        <?php
+        $stmt = $pdo->prepare('UPDATE users SET is_verified = 1, verification_token = NULL WHERE id = ?');
+        $stmt->execute([$user['id']]);
+        ?>
+        <p class="success">Your account is now verified. You can log in.</p>
+        <a href="login.php" class="cta" style="text-align:center; margin-top:1rem;">Go to Login</a>
+      <?php endif; ?>
+    </div>
+  </div>
+</div>
+
+<?php require __DIR__ . '/../includes/footer.php'; ?>

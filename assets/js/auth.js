@@ -1,5 +1,7 @@
 function showPanel(panelId) {
   var slider = document.getElementById('authSlider');
+  if (!slider) return;
+
   var positions = {
     'loginPanel': '0%',
     'registerPanel': '-50%'

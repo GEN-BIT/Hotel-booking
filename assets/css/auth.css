@@ -1,5 +1,3 @@
-@import url('themes.css');
-
 .auth-page {
   min-height: 100vh;
   display: flex;
@@ -153,7 +151,7 @@
 
 .auth-panel button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px var(--color-shadow);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
 }
 
 .auth-switch {

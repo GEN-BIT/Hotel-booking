@@ -1,5 +1,8 @@
 <?php require_once __DIR__ . '/../config/config.php';
 
+$extraCSS = [BASE_URL . 'assets/css/auth.css'];
+$extraJS = [BASE_URL . 'assets/js/auth.js'];
+
 $token = $_GET['token'] ?? $_POST['token'] ?? '';
 $error = ''; $success = false;
 
@@ -11,8 +14,18 @@ $user = $stmt->fetch();
 
 if (!$user || $user['reset_token_expires'] < date('Y-m-d H:i:s')) {
     require __DIR__ . '/../includes/header.php';
-    echo '<h1>Invalid Link</h1><p class="error">This reset link is invalid or has expired.</p>
-          <a href="login.php?mode=forgot">Request a new link</a>';
+    ?>
+    <div class="auth-page">
+      <div class="auth-card">
+        <div class="auth-panel active" style="width:100%">
+          <h2>Invalid Link</h2>
+          <p class="auth-subtitle">This reset link is invalid or has expired.</p>
+          <p class="error">This reset link is invalid or has expired.</p>
+          <a href="login.php?mode=forgot" class="cta" style="text-align:center; margin-top:1rem;">Request a new link</a>
+        </div>
+      </div>
+    </div>
+    <?php
     require __DIR__ . '/../includes/footer.php';
     exit;
 }
@@ -35,17 +48,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 require __DIR__ . '/../includes/header.php';
 ?>
-<h1>Reset Password</h1>
-<?php if ($success): ?>
-    <p class="success">Password updated. You can now log in.</p>
-    <a href="login.php">Go to Login</a>
-<?php else: ?>
-    <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
-    <form method="post">
-        <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
-        <label>New Password <input type="password" name="password" required></label>
-        <label>Confirm Password <input type="password" name="confirm_password" required></label>
-        <button type="submit">Reset Password</button>
-    </form>
-<?php endif; ?>
+
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-panel active" style="width:100%">
+      <h2>Reset Password</h2>
+      <p class="auth-subtitle">Create a new password for your account</p>
+      <?php if ($success): ?>
+        <p class="success">Password updated. You can now log in.</p>
+        <a href="login.php" class="cta" style="text-align:center; margin-top:1rem;">Go to Login</a>
+      <?php else: ?>
+        <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
+        <form method="post">
+            <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
+            <label>New Password <input type="password" name="password" required></label>
+            <label>Confirm Password <input type="password" name="confirm_password" required></label>
+            <button type="submit">Reset Password</button>
+        </form>
+      <div class="auth-switch">
+        <p><a href="login.php">Back to login</a></p>
+      </div>
+      <?php endif; ?>
+    </div>
+  </div>
+</div>
+
 <?php require __DIR__ . '/../includes/footer.php'; ?>

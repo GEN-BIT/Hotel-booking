@@ -255,14 +255,24 @@ button:active, .cta:active {
 .search-form {
   display: flex;
   gap: 1rem;
-  align-items: flex-end;
+  align-items: center;
   flex-wrap: wrap;
-  margin-bottom: 2rem;
-  padding: 1.5rem;
+  justify-content: center;
+  margin: 0 auto 2.5rem;
+  padding: 1.5rem 2rem;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
+  max-width: 900px;
+}
+
+.search-form label {
+  text-align: center;
+}
+
+.search-form button {
+  margin: 0 auto;
 }
 
 .room-grid {

@@ -70,3 +70,23 @@ INSERT INTO rooms (room_type_id, room_number, floor, status) VALUES
 -- Presidential Suite (id 5) — floor 4 (penthouse)
 INSERT INTO rooms (room_type_id, room_number, floor, status) VALUES
 (5, '401', '4', 'available');
+
+-- Sample coupons
+INSERT INTO coupons (code, discount_type, discount_value, max_uses, valid_from, valid_until, is_active) VALUES
+('WELCOME10', 'percentage', 10, 100, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 30 DAY), 1),
+('SAVE20', 'fixed', 20, 50, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 60 DAY), 1),
+('SUMMER25', 'percentage', 25, 200, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 90 DAY), 1);
+
+-- Sample reviews
+INSERT INTO reviews (booking_id, user_id, room_type_id, rating, comment) VALUES
+(1, 2, 2, 5, 'Amazing room with great view!'),
+(2, 3, 1, 4, 'Clean and comfortable, would stay again.'),
+(3, 2, 3, 5, 'Excellent service and spacious suite.');
+
+-- Sample activity log entries
+INSERT INTO activity_log (actor_user_id, actor_name, action, description) VALUES
+(NULL, 'System', 'system.init', 'Hotel booking system initialized with sample data'),
+(1, 'Admin User', 'admin.login', 'Admin logged in from 127.0.0.1'),
+(2, 'John Doe', 'booking.created', 'Booking HB-20240101-A1B2C created for Deluxe Room 201'),
+(3, 'Jane Smith', 'booking.created', 'Booking HB-20240102-D4E5F created for Standard Room 101'),
+(2, 'John Doe', 'review.created', 'Review submitted for Deluxe Room');
