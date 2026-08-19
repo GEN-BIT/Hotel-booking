@@ -14,6 +14,7 @@ if (!$booking) {
 if (in_array($booking['status'], ['confirmed', 'pending'])) {
     $stmt = $pdo->prepare('UPDATE bookings SET status = "cancelled" WHERE id = ?');
     $stmt->execute([$bookingId]);
+    log_activity($pdo, 'booking.cancelled_by_guest', "Booking {$booking['booking_reference']} cancelled by guest");
 }
 
 header('Location: ' . BASE_URL . 'account/reservations.php');

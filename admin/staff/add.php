@@ -28,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare('INSERT INTO staff (user_id, position, is_active) VALUES (?, ?, 1)');
             $stmt->execute([$userId, $position]);
             $pdo->commit();
+            log_activity($pdo, 'staff.added', "Staff account created for $name ($role)");
             header('Location: index.php');
             exit;
         }

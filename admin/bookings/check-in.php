@@ -2,15 +2,16 @@
 require_role_any(['admin', 'staff']);
 $id = (int)($_GET['id'] ?? 0);
 
-$stmt = $pdo->prepare('SELECT room_id FROM bookings WHERE id = ? AND status = "confirmed"');
+$stmt = $pdo->prepare('SELECT room_id, booking_reference FROM bookings WHERE id = ? AND status = "confirmed"');
 $stmt->execute([$id]);
-$roomId = $stmt->fetchColumn();
+$row = $stmt->fetch();
 
-if ($roomId) {
+if ($row) {
     $pdo->beginTransaction();
     $pdo->prepare('UPDATE bookings SET status = "checked_in" WHERE id = ?')->execute([$id]);
-    $pdo->prepare('UPDATE rooms SET status = "occupied" WHERE id = ?')->execute([$roomId]);
+    $pdo->prepare('UPDATE rooms SET status = "occupied" WHERE id = ?')->execute([$row['room_id']]);
     $pdo->commit();
+    log_activity($pdo, 'booking.checked_in', "Booking {$row['booking_reference']} checked in");
 }
 header('Location: view.php?id=' . $id);
 exit;

@@ -17,9 +17,9 @@ require_role_any(['admin', 'staff']);
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/themes.css?v=2">
-    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css?v=2">
-    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/admin.css?v=2">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/themes.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/admin.css">
 </head>
 <body>
 <div class="admin-layout">
@@ -33,12 +33,15 @@ require_role_any(['admin', 'staff']);
         <a href="<?= BASE_URL ?>admin/bookings/index.php">Bookings</a>
         <a href="<?= BASE_URL ?>admin/guests/index.php">Guests</a>
         <a href="<?= BASE_URL ?>admin/payments/index.php">Payments</a>
+        <a href="<?= BASE_URL ?>admin/coupons/index.php">Coupons</a>
         <a href="<?= BASE_URL ?>admin/reviews/index.php">Reviews</a>
         <a href="<?= BASE_URL ?>admin/reports/occupancy.php">Reports</a>
+        <a href="<?= BASE_URL ?>admin/activity-log.php">Activity Log</a>
         <?php if (current_role() === 'admin'): ?>
         <a href="<?= BASE_URL ?>admin/staff/index.php">Staff</a>
         <a href="<?= BASE_URL ?>admin/settings/index.php">Settings</a>
         <?php endif; ?>
+        <a href="<?= BASE_URL ?>admin/change-password.php">Change Password</a>
         <a href="<?= BASE_URL ?>auth/logout.php">Logout</a>
     </nav>
         <div class="theme-switcher">

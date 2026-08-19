@@ -1,11 +1,12 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
 
 $id = (int)($_GET['id'] ?? 0);
-$stmt = $pdo->prepare('SELECT b.*, u.full_name, u.email, r.room_number, rt.name AS type_name
+$stmt = $pdo->prepare('SELECT b.*, u.full_name, u.email, r.room_number, rt.name AS type_name, c.code AS coupon_code
                         FROM bookings b
                         JOIN users u ON b.user_id = u.id
                         JOIN rooms r ON b.room_id = r.id
                         JOIN room_types rt ON r.room_type_id = rt.id
+                        LEFT JOIN coupons c ON b.coupon_id = c.id
                         WHERE b.id = ?');
 $stmt->execute([$id]);
 $booking = $stmt->fetch();
@@ -19,6 +20,9 @@ $guests = $stmt->fetchAll(PDO::FETCH_COLUMN);
 <p>Guest: <?= htmlspecialchars($booking['full_name']) ?> (<?= htmlspecialchars($booking['email']) ?>)</p>
 <p>Room: <?= htmlspecialchars($booking['type_name']) ?> — <?= htmlspecialchars($booking['room_number']) ?></p>
 <p>Dates: <?= htmlspecialchars($booking['check_in']) ?> &rarr; <?= htmlspecialchars($booking['check_out']) ?></p>
+<?php if ($booking['discount_amount'] > 0): ?>
+    <p>Coupon<?= $booking['coupon_code'] ? ' (' . htmlspecialchars($booking['coupon_code']) . ')' : '' ?> discount: -$<?= number_format($booking['discount_amount'], 2) ?></p>
+<?php endif; ?>
 <p>Total: $<?= number_format($booking['total_price'], 2) ?></p>
 <?php if ($guests): ?><p>Additional guests: <?= htmlspecialchars(implode(', ', $guests)) ?></p><?php endif; ?>
 <?php if (!empty($booking['special_requests'])): ?><p>Requests: <?= htmlspecialchars($booking['special_requests']) ?></p><?php endif; ?>

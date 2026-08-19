@@ -3,10 +3,11 @@ require_login();
 
 $id = (int)($_GET['id'] ?? 0);
 $stmt = $pdo->prepare(
-    'SELECT b.*, rt.name AS type_name, r.room_number, rt.base_price
+    'SELECT b.*, rt.name AS type_name, r.room_number, rt.base_price, c.code AS coupon_code
      FROM bookings b
      JOIN rooms r ON b.room_id = r.id
      JOIN room_types rt ON r.room_type_id = rt.id
+     LEFT JOIN coupons c ON b.coupon_id = c.id
      WHERE b.id = ? AND b.user_id = ?'
 );
 $stmt->execute([$id, $_SESSION['user_id']]);
@@ -36,6 +37,9 @@ require __DIR__ . '/../includes/header.php';
 <?php endif; ?>
 <?php if (!empty($booking['special_requests'])): ?>
     <p>Requests: <?= htmlspecialchars($booking['special_requests']) ?></p>
+<?php endif; ?>
+<?php if ($booking['discount_amount'] > 0): ?>
+    <p>Coupon<?= $booking['coupon_code'] ? ' (' . htmlspecialchars($booking['coupon_code']) . ')' : '' ?> discount: -$<?= number_format($booking['discount_amount'], 2) ?></p>
 <?php endif; ?>
 <p class="price">Total: $<?= number_format($booking['total_price'], 2) ?></p>
 <p>Status: <span class="status status-<?= htmlspecialchars($booking['status']) ?>"><?= htmlspecialchars($booking['status']) ?></span></p>

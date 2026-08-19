@@ -13,7 +13,6 @@ $stmt = $pdo->prepare('SELECT r.*, rt.name AS type_name, rt.base_price
 $stmt->execute([$pb['room_id']]);
 $room = $stmt->fetch();
 
-// Re-verify availability server-side — never trust what got us here
 $stmt = $pdo->prepare(
     'SELECT COUNT(*) FROM bookings
      WHERE room_id = ? AND status IN ("pending","confirmed","checked_in")
@@ -23,8 +22,57 @@ $stmt->execute([$pb['room_id'], $pb['check_out'], $pb['check_in']]);
 $conflict = (int)$stmt->fetchColumn() > 0;
 
 $nights = (strtotime($pb['check_out']) - strtotime($pb['check_in'])) / 86400;
-$total  = $nights * $room['base_price'];
-$_SESSION['pending_booking']['total_price'] = $total; // PHP-calculated, not browser-supplied
+$subtotal = $nights * $room['base_price'];
+$couponError = '';
+
+if (isset($_GET['coupon'])) {
+    $code = strtoupper(trim($_GET['coupon']));
+    if ($code === '') {
+        unset($pb['coupon_code']);
+    } else {
+        $cstmt = $pdo->prepare('SELECT * FROM coupons WHERE code = ?');
+        $cstmt->execute([$code]);
+        $coupon = $cstmt->fetch();
+
+        if (!$coupon || !$coupon['is_active']) {
+            $couponError = 'Invalid or inactive coupon code.';
+        } elseif ($coupon['valid_from'] && $coupon['valid_from'] > date('Y-m-d')) {
+            $couponError = 'This coupon is not active yet.';
+        } elseif ($coupon['valid_until'] && $coupon['valid_until'] < date('Y-m-d')) {
+            $couponError = 'This coupon has expired.';
+        } elseif ($coupon['max_uses'] !== null && $coupon['times_used'] >= $coupon['max_uses']) {
+            $couponError = 'This coupon has reached its usage limit.';
+        } else {
+            $pb['coupon_code'] = $code;
+        }
+    }
+}
+
+if (isset($_GET['remove_coupon'])) {
+    unset($pb['coupon_code']);
+}
+
+$discount = 0;
+$appliedCoupon = null;
+if (!empty($pb['coupon_code'])) {
+    $cstmt = $pdo->prepare('SELECT * FROM coupons WHERE code = ? AND is_active = 1');
+    $cstmt->execute([$pb['coupon_code']]);
+    $appliedCoupon = $cstmt->fetch();
+
+    if ($appliedCoupon) {
+        $discount = $appliedCoupon['discount_type'] === 'percentage'
+            ? $subtotal * ($appliedCoupon['discount_value'] / 100)
+            : min($appliedCoupon['discount_value'], $subtotal);
+    } else {
+        unset($pb['coupon_code']);
+    }
+}
+
+$total = max(0, $subtotal - $discount);
+$pb['total_price'] = $total;
+$pb['discount_amount'] = $discount;
+$pb['coupon_id'] = $appliedCoupon['id'] ?? null;
+$_SESSION['pending_booking'] = $pb;
 
 require __DIR__ . '/../includes/header.php';
 ?>
@@ -39,6 +87,21 @@ require __DIR__ . '/../includes/header.php';
     <?php if (!empty($pb['special_requests'])): ?>
         <p>Requests: <?= htmlspecialchars($pb['special_requests']) ?></p>
     <?php endif; ?>
+
+    <p>Subtotal: $<?= number_format($subtotal, 2) ?></p>
+
+    <?php if ($couponError): ?><p class="error"><?= htmlspecialchars($couponError) ?></p><?php endif; ?>
+
+    <?php if ($appliedCoupon): ?>
+        <p class="success">Coupon "<?= htmlspecialchars($appliedCoupon['code']) ?>" applied: -$<?= number_format($discount, 2) ?>
+        &nbsp;<a href="?remove_coupon=1">Remove</a></p>
+    <?php else: ?>
+        <form method="get" class="coupon-form">
+            <label>Coupon Code <input type="text" name="coupon" placeholder="Enter code"></label>
+            <button type="submit">Apply</button>
+        </form>
+    <?php endif; ?>
+
     <p class="price">Total: $<?= number_format($total, 2) ?></p>
     <form method="post" action="confirm.php">
         <button type="submit">Confirm Booking</button>

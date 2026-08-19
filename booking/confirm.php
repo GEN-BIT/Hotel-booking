@@ -19,16 +19,31 @@ try {
         throw new Exception('Room no longer available.');
     }
 
+    $couponId = $pb['coupon_id'] ?? null;
+    $discountAmount = $pb['discount_amount'] ?? 0;
+
+    if ($couponId) {
+        $cstmt = $pdo->prepare('SELECT * FROM coupons WHERE id = ? AND is_active = 1 FOR UPDATE');
+        $cstmt->execute([$couponId]);
+        $coupon = $cstmt->fetch();
+
+        if (!$coupon || ($coupon['max_uses'] !== null && $coupon['times_used'] >= $coupon['max_uses'])) {
+            throw new Exception('Your coupon is no longer valid. Please review your booking again.');
+        }
+        $pdo->prepare('UPDATE coupons SET times_used = times_used + 1 WHERE id = ?')->execute([$couponId]);
+    }
+
     $reference = 'HB-' . date('Ymd') . '-' . strtoupper(substr(bin2hex(random_bytes(3)), 0, 6));
 
     $stmt = $pdo->prepare(
-        'INSERT INTO bookings (booking_reference, user_id, room_id, check_in, check_out, num_guests, total_price, status, special_requests)
-         VALUES (?, ?, ?, ?, ?, ?, ?, "confirmed", ?)'
+        'INSERT INTO bookings (booking_reference, user_id, room_id, check_in, check_out, num_guests, total_price, coupon_id, discount_amount, status, special_requests)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, "confirmed", ?)'
     );
     $stmt->execute([
         $reference, $_SESSION['user_id'], $pb['room_id'],
         $pb['check_in'], $pb['check_out'], $pb['guests'],
-        $pb['total_price'], $pb['special_requests'] ?? null,
+        $pb['total_price'], $couponId, $discountAmount,
+        $pb['special_requests'] ?? null,
     ]);
     $bookingId = $pdo->lastInsertId();
 
@@ -40,6 +55,10 @@ try {
     }
 
     $pdo->commit();
+    $logMsg = "Booking $reference created, {$pb['check_in']} to {$pb['check_out']}";
+    if ($couponId) $logMsg .= " (coupon {$pb['coupon_code']} applied, -$" . number_format($discountAmount, 2) . ")";
+    log_activity($pdo, 'booking.created', $logMsg);
+
     unset($_SESSION['pending_booking']);
     $_SESSION['last_booking_reference'] = $reference;
     $_SESSION['last_booking_id'] = $bookingId;

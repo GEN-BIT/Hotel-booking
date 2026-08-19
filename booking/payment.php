@@ -33,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              VALUES (?, ?, ?, "paid", ?, NOW())'
         );
         $stmt->execute([$bookingId, $booking['total_price'], $method, $ref]);
+        log_activity($pdo, 'payment.received', 'Payment of $' . number_format($booking['total_price'], 2) . " received for booking {$booking['booking_reference']} via $method");
         header('Location: ' . BASE_URL . 'booking/success.php');
         exit;
     }
@@ -41,7 +42,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 require __DIR__ . '/../includes/header.php';
 ?>
 <h1>Payment</h1>
-<p>Booking <?= htmlspecialchars($booking['booking_reference']) ?> — Total due: $<?= number_format($booking['total_price'], 2) ?></p>
+<p>Booking <?= htmlspecialchars($booking['booking_reference']) ?></p>
+<?php if ($booking['discount_amount'] > 0): ?>
+    <p>Discount applied: -$<?= number_format($booking['discount_amount'], 2) ?></p>
+<?php endif; ?>
+<p>Total due: $<?= number_format($booking['total_price'], 2) ?></p>
 <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
 <p class="notice">This is a simulated payment for demo purposes — no real card processing occurs.</p>
 <form method="post">

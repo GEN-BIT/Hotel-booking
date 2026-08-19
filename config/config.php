@@ -48,3 +48,10 @@ function set_setting($pdo, $key, $value) {
     );
     $stmt->execute([$key, $value]);
 }
+
+function log_activity($pdo, $action, $description) {
+    $userId = $_SESSION['user_id'] ?? null;
+    $name = $_SESSION['full_name'] ?? 'Guest';
+    $stmt = $pdo->prepare('INSERT INTO activity_log (actor_user_id, actor_name, action, description) VALUES (?, ?, ?, ?)');
+    $stmt->execute([$userId, $name, $action, $description]);
+}
