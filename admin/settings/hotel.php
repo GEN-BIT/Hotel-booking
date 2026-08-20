@@ -1,7 +1,7 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
 require_role_any(['admin']);
 
-$fields = ['hotel_name', 'hotel_address', 'hotel_phone', 'hotel_email', 'check_in_time', 'check_out_time'];
+$fields = ['hotel_name', 'hotel_address', 'hotel_phone', 'hotel_email', 'check_in_time', 'check_out_time', 'currency'];
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -24,6 +24,14 @@ foreach ($fields as $f) $values[$f] = get_setting($pdo, $f);
     <label>Email <input type="email" name="hotel_email" value="<?= htmlspecialchars($values['hotel_email']) ?>"></label>
     <label>Check-in Time <input type="time" name="check_in_time" value="<?= htmlspecialchars($values['check_in_time']) ?>"></label>
     <label>Check-out Time <input type="time" name="check_out_time" value="<?= htmlspecialchars($values['check_out_time']) ?>"></label>
+    <label>Currency
+        <select name="currency">
+            <option value="USD" <?= $values['currency'] === 'USD' ? 'selected' : '' ?>>USD ($)</option>
+            <option value="EUR" <?= $values['currency'] === 'EUR' ? 'selected' : '' ?>>EUR (€)</option>
+            <option value="GBP" <?= $values['currency'] === 'GBP' ? 'selected' : '' ?>>GBP (£)</option>
+            <option value="RWF" <?= $values['currency'] === 'RWF' ? 'selected' : '' ?>>RWF</option>
+        </select>
+    </label>
     <button type="submit">Save</button>
 </form>
 <?php require __DIR__ . '/../../includes/admin-footer.php'; ?>

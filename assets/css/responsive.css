@@ -1,0 +1,552 @@
+/* ============================================
+   Responsive Styles
+   Tablet and Mobile Optimizations
+   ============================================ */
+
+/* ---------- Tablet (768px - 1024px) ---------- */
+@media (max-width: 1024px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    padding: 1rem;
+  }
+
+  .admin-sidebar nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    overflow: hidden;
+  }
+
+  .admin-sidebar nav a {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
+  }
+
+  .admin-main-wrapper {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .admin-topbar {
+    padding: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .admin-main {
+    padding: 1.5rem 1rem;
+  }
+
+  .admin-page-title {
+    font-size: 1.25rem;
+  }
+
+  .data-table {
+    font-size: 0.9rem;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .stat-card h3 {
+    font-size: 1.5rem;
+  }
+
+  select, input, textarea, button {
+    max-width: 100%;
+  }
+
+  .filter-form select {
+    max-width: 100%;
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .filter-form button {
+    width: 100%;
+  }
+}
+
+/* ---------- Mobile (< 768px) ---------- */
+@media (max-width: 768px) {
+  .site-header {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+    padding: 1rem;
+    overflow: hidden;
+  }
+
+  .site-header nav {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .site-header a {
+    margin-left: 0;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.9rem;
+    max-width: 100%;
+    overflow-wrap: break-word;
+  }
+
+  .logo {
+    text-align: center;
+    font-size: 1.1rem !important;
+    max-width: 100%;
+    overflow-wrap: break-word;
+  }
+
+  .theme-switcher {
+    margin-left: 0;
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+
+  .language-select {
+    margin-left: 0;
+    margin-top: 0.5rem;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .site-main {
+    padding: 1rem 0.75rem;
+    min-height: calc(100vh - 180px);
+    overflow-x: hidden;
+  }
+
+  .site-main h1 {
+    font-size: 1.5rem;
+  }
+
+  .hero {
+    padding: 2rem 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 {
+    font-size: 1.6rem;
+  }
+
+  .hero p {
+    font-size: 0.95rem;
+  }
+
+  .search-form {
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+
+  .search-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-row button {
+    width: 100%;
+  }
+
+  .search-row select,
+  .search-row input {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .room-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .room-card {
+    padding: 1rem;
+  }
+
+  .room-card .price {
+    font-size: 1rem;
+  }
+
+  .room-card img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .data-table {
+    font-size: 0.85rem;
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 0.5rem 0.5rem;
+  }
+
+  .data-table th {
+    font-size: 0.75rem;
+  }
+
+  .data-table select,
+  .data-table input {
+    max-width: 120px;
+  }
+
+  .filter-form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .filter-form select {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .filter-form button {
+    width: 100%;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .action-buttons a,
+  .action-buttons button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .admin-topbar {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+    padding: 1rem;
+    overflow: hidden;
+  }
+
+  .admin-page-title {
+    font-size: 1.1rem;
+    text-align: center;
+  }
+
+  .language-select {
+    width: 100%;
+    max-width: 100%;
+    margin-right: 0;
+  }
+
+  .theme-select-top {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .chart-card {
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  .stat-card h3 {
+    font-size: 1.25rem;
+  }
+
+  .stat-card p {
+    font-size: 0.8rem;
+  }
+
+  form {
+    max-width: 100%;
+  }
+
+  label {
+    font-size: 0.85rem;
+  }
+
+  input, select, textarea {
+    font-size: 0.95rem;
+    padding: 0.6rem 0.75rem;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2.5rem;
+  }
+
+  button, .cta {
+    padding: 0.65rem 1rem;
+    font-size: 0.95rem;
+    max-width: 100%;
+  }
+
+  .auth-card {
+    margin: 1rem;
+    padding: 1.5rem 1rem;
+  }
+
+  .auth-panel h2 {
+    font-size: 1.4rem;
+  }
+
+  .breadcrumb {
+    font-size: 0.8rem;
+    padding: 0.5rem 0.75rem;
+    overflow-wrap: break-word;
+  }
+
+  .breadcrumb a {
+    display: inline-block;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+
+  .admin-sidebar nav a {
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .coupon-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .coupon-form input,
+  .coupon-form button {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .payment-summary table {
+    font-size: 0.85rem;
+  }
+
+  .payment-summary td,
+  .payment-summary th {
+    padding: 0.4rem 0;
+  }
+}
+
+/* ---------- Small Mobile (< 480px) ---------- */
+@media (max-width: 480px) {
+  .site-header {
+    padding: 0.75rem;
+  }
+
+  .site-header a {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .logo {
+    font-size: 1rem !important;
+  }
+
+  .site-main {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .site-main h1 {
+    font-size: 1.25rem;
+  }
+
+  .hero {
+    padding: 1.5rem 1rem;
+  }
+
+  .hero h1 {
+    font-size: 1.3rem;
+  }
+
+  .hero p {
+    font-size: 0.85rem;
+  }
+
+  .search-form {
+    padding: 0.75rem;
+  }
+
+  .room-grid {
+    gap: 0.75rem;
+  }
+
+  .room-card {
+    padding: 0.75rem;
+  }
+
+  .data-table {
+    font-size: 0.8rem;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 0.4rem 0.4rem;
+  }
+
+  .admin-sidebar {
+    padding: 0.75rem;
+  }
+
+  .admin-sidebar nav a {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .admin-main {
+    padding: 1rem 0.5rem;
+  }
+
+  .stat-card {
+    padding: 0.75rem;
+  }
+
+  .stat-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .auth-card {
+    margin: 0.5rem;
+    padding: 1rem 0.75rem;
+  }
+
+  .auth-panel h2 {
+    font-size: 1.2rem;
+  }
+
+  .cta, button {
+    width: 100%;
+    text-align: center;
+  }
+
+  select, input, textarea {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+
+  .filter-form select {
+    max-width: 100%;
+  }
+}
+
+/* ---------- Touch Device Optimizations ---------- */
+@media (hover: none) and (pointer: coarse) {
+  .site-header a,
+  .admin-sidebar nav a,
+  button, .cta, .link-btn {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  input, select, textarea {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  .room-card:hover {
+    transform: none;
+  }
+
+  button:hover, .cta:hover {
+    transform: none;
+  }
+
+  select {
+    background-size: 12px 12px;
+    background-position: right 0.75rem center;
+  }
+}
+
+/* ---------- Print Styles ---------- */
+@media print {
+  .site-header,
+  .site-footer,
+  .admin-sidebar,
+  .admin-topbar,
+  .theme-switcher,
+  .language-select,
+  button,
+  .cta {
+    display: none !important;
+  }
+
+  .site-main,
+  .admin-main {
+    padding: 0;
+    margin: 0;
+  }
+
+  body {
+    background: white;
+    color: black;
+  }
+
+  .data-table {
+    border: 1px solid #000;
+  }
+
+  .data-table th,
+  .data-table td {
+    border: 1px solid #000;
+    padding: 0.5rem;
+  }
+}
+
+/* ---------- Prevent Horizontal Overflow ---------- */
+@media (max-width: 1024px) {
+  body, html {
+    overflow-x: hidden;
+  }
+
+  .site-header nav,
+  .admin-sidebar nav,
+  .admin-topbar,
+  .filter-form,
+  .search-form {
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+  .admin-sidebar {
+    overflow: hidden;
+  }
+
+  .admin-sidebar nav a,
+  .site-header a {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+}

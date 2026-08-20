@@ -27,6 +27,34 @@ try {
     $couponId = $pb['coupon_id'] ?? null;
     $discountAmount = $pb['discount_amount'] ?? 0;
 
+    $stmt = $pdo->prepare('SELECT rt.base_price, rt.id AS room_type_id FROM rooms r JOIN room_types rt ON r.room_type_id = rt.id WHERE r.id = ?');
+    $stmt->execute([$pb['room_id']]);
+    $roomType = $stmt->fetch();
+
+    $nights = (strtotime($pb['check_out']) - strtotime($pb['check_in'])) / 86400;
+    
+    $servicesTotal = 0;
+    if (!empty($pb['selected_services'])) {
+        $serviceIds = array_keys($pb['selected_services']);
+        $placeholders = implode(',', array_fill(0, count($serviceIds), '?'));
+        $stmt = $pdo->prepare("SELECT price FROM services WHERE id IN ($placeholders) AND is_active = 1");
+        $stmt->execute($serviceIds);
+        foreach ($stmt->fetchAll() as $s) {
+            $servicesTotal += $s['price'];
+        }
+    }
+    
+    $seasonalPrice = get_seasonal_price($pdo, $roomType['room_type_id'], $pb['check_in'], $pb['check_out']);
+    if ($seasonalPrice !== null) {
+        $basePrice = $seasonalPrice;
+    } else {
+        $basePrice = (float)$roomType['base_price'];
+    }
+    
+    $roomTotal = $basePrice * $nights;
+    $subtotal = $roomTotal + $servicesTotal;
+    $pb['total_price'] = max(0, $subtotal - $discountAmount);
+
     if ($couponId) {
         $cstmt = $pdo->prepare('SELECT * FROM coupons WHERE id = ? AND is_active = 1 FOR UPDATE');
         $cstmt->execute([$couponId]);

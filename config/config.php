@@ -17,11 +17,6 @@ if (file_exists($envFile)) {
     }
 }
 
-// Base URL - prefer APP_URL env var, fallback to default
-define('BASE_URL', $_ENV['APP_URL'] ?? 'http://localhost/hotel-booking/');
-define('DEFAULT_LANG', 'en');
-define('SUPPORTED_LANGS', ['en', 'rw', 'fr']);
-
 // HTTPS enforcement
 $forceHttps = ($_ENV['FORCE_HTTPS'] ?? 'false') === 'true';
 if ($forceHttps && (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on' || $_SERVER['SERVER_PORT'] != 443)) {
@@ -29,6 +24,16 @@ if ($forceHttps && (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on' || $
     header('Location: ' . $httpsUrl, true, 301);
     exit;
 }
+
+// Allow HTTPS on localhost
+$isLocalhost = in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1']) || strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost') !== false;
+if ($isLocalhost && isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+    $_ENV['FORCE_HTTPS'] = 'true';
+}
+
+define('BASE_URL', $_ENV['APP_URL'] ?? ($isLocalhost ? 'https://localhost/hotel-booking/' : 'http://localhost/hotel-booking/'));
+define('DEFAULT_LANG', 'en');
+define('SUPPORTED_LANGS', ['en', 'rw', 'fr']);
 
 // Security headers
 header('X-Content-Type-Options: nosniff');
@@ -275,4 +280,47 @@ function log_activity($pdo, $action, $description) {
     $name = $_SESSION['full_name'] ?? 'Guest';
     $stmt = $pdo->prepare('INSERT INTO activity_log (actor_user_id, actor_name, action, description) VALUES (?, ?, ?, ?)');
     $stmt->execute([$userId, $name, $action, $description]);
+}
+
+/**
+ * Multi-currency support
+ */
+function get_currency() {
+    return get_setting($GLOBALS['pdo'], 'currency', 'USD');
+}
+
+function currency_symbol($currency = null) {
+    $currency = $currency ?: get_currency();
+    $symbols = [
+        'USD' => '$',
+        'EUR' => '€',
+        'GBP' => '£',
+        'RWF' => 'RWF ',
+    ];
+    return $symbols[$currency] ?? '$';
+}
+
+function format_currency($amount, $currency = null) {
+    $currency = $currency ?: get_currency();
+    $symbol = currency_symbol($currency);
+    
+    if ($currency === 'RWF') {
+        return $symbol . number_format((int)round($amount), 0);
+    }
+    
+    return $symbol . number_format((float)$amount, 2);
+}
+
+/**
+ * Get seasonal price for a room type on given dates
+ */
+function get_seasonal_price($pdo, $roomTypeId, $checkIn, $checkOut) {
+    $stmt = $pdo->prepare(
+        'SELECT price FROM room_type_pricing
+         WHERE room_type_id = ? AND valid_from <= ? AND valid_until >= ?
+         ORDER BY valid_from DESC LIMIT 1'
+    );
+    $stmt->execute([$roomTypeId, $checkIn, $checkOut]);
+    $price = $stmt->fetchColumn();
+    return $price !== false ? (float)$price : null;
 }

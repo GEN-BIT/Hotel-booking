@@ -19,6 +19,10 @@ $bookings = $stmt->fetchAll();
 <p>Phone: <?= htmlspecialchars($guest['phone'] ?? '—') ?></p>
 <p>Joined: <?= htmlspecialchars($guest['created_at']) ?></p>
 
+<div style="margin: 1rem 0;">
+    <a href="documents.php?id=<?= (int)$guest['id'] ?>" class="cta"><?= trans('manage') ?> Documents</a>
+</div>
+
 <h3>Booking History</h3>
 <table class="data-table">
     <tr><th>Reference</th><th>Room</th><th>Dates</th><th>Status</th></tr>

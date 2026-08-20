@@ -7,7 +7,7 @@ if (empty($_SESSION['pending_booking'])) {
 }
 $pb = $_SESSION['pending_booking'];
 
-$stmt = $pdo->prepare('SELECT r.*, rt.name AS type_name, rt.base_price
+$stmt = $pdo->prepare('SELECT r.*, rt.name AS type_name, rt.base_price, rt.id AS room_type_id
                         FROM rooms r JOIN room_types rt ON r.room_type_id = rt.id
                         WHERE r.id = ?');
 $stmt->execute([$pb['room_id']]);
@@ -22,7 +22,10 @@ $stmt->execute([$pb['room_id'], $pb['check_out'], $pb['check_in']]);
 $conflict = (int)$stmt->fetchColumn() > 0;
 
 $nights = (strtotime($pb['check_out']) - strtotime($pb['check_in'])) / 86400;
-$subtotal = $nights * $room['base_price'];
+
+$seasonalPrice = get_seasonal_price($pdo, $room['room_type_id'], $pb['check_in'], $pb['check_out']);
+$basePrice = $seasonalPrice !== null ? $seasonalPrice : $room['base_price'];
+$subtotal = $nights * $basePrice;
 $couponError = '';
 
 if (isset($_GET['coupon'])) {
@@ -101,16 +104,19 @@ require __DIR__ . '/../includes/header.php';
         <p><?= trans('requests_label') ?> <?= htmlspecialchars($pb['special_requests']) ?></p>
     <?php endif; ?>
 
-    <p><?= trans('room_subtotal') ?> $<?= number_format($subtotal, 2) ?></p>
+    <p><?= trans('room_subtotal') ?> <?= format_currency($subtotal) ?></p>
+    <?php if ($seasonalPrice !== null): ?>
+        <p class="notice"><?= trans('seasonal_rate_applies') ?></p>
+    <?php endif; ?>
 
     <?php if ($selectedServices): ?>
         <h3><?= trans('extra_services') ?></h3>
         <ul>
             <?php foreach ($selectedServices as $s): ?>
-                <li><?= htmlspecialchars($s['name']) ?> — $<?= number_format($s['price'], 2) ?></li>
+                <li><?= htmlspecialchars($s['name']) ?> — <?= format_currency($s['price']) ?></li>
             <?php endforeach; ?>
         </ul>
-        <p><?= trans('services_total') ?> $<?= number_format($servicesTotal, 2) ?></p>
+        <p><?= trans('services_total') ?> <?= format_currency($servicesTotal) ?></p>
     <?php endif; ?>
 
     <?php if ($couponError): ?><p class="error"><?= htmlspecialchars($couponError) ?></p><?php endif; ?>
@@ -125,7 +131,7 @@ require __DIR__ . '/../includes/header.php';
         </form>
     <?php endif; ?>
 
-    <p class="price"><?= trans('total_price_label') ?> $<?= number_format($total, 2) ?></p>
+    <p class="price"><?= trans('total_price_label') ?> <?= format_currency($total) ?></p>
     <form method="post" action="confirm.php">
           <?= csrf_field() ?>
         <button type="submit"><?= trans('confirm_booking') ?></button>

@@ -20,6 +20,7 @@ require_role_any(['admin', 'staff']);
     <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/themes.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/admin.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/responsive.css">
     <script src="<?= BASE_URL ?>assets/js/language.js"></script>
 </head>
 <body>
@@ -29,6 +30,7 @@ require_role_any(['admin', 'staff']);
     <nav>
         <a href="<?= BASE_URL ?>admin/dashboard.php"><?= trans('dashboard') ?></a>
         <a href="<?= BASE_URL ?>admin/rooms/index.php"><?= trans('rooms') ?></a>
+        <a href="<?= BASE_URL ?>admin/rooms/maintenance.php"><?= trans('maintenance_mode') ?></a>
         <a href="<?= BASE_URL ?>admin/room-types/index.php"><?= trans('room_types') ?></a>
         <a href="<?= BASE_URL ?>admin/amenities/index.php"><?= trans('amenities') ?></a>
         <a href="<?= BASE_URL ?>admin/services/index.php"><?= trans('services') ?></a>
@@ -50,6 +52,7 @@ require_role_any(['admin', 'staff']);
         <a href="<?= BASE_URL ?>admin/notifications/email-log.php"><?= trans('email_log') ?></a>
         <?php if (current_role() === 'admin'): ?>
         <a href="<?= BASE_URL ?>admin/staff/index.php"><?= trans('staff') ?></a>
+        <a href="<?= BASE_URL ?>admin/staff/roster.php"><?= trans('roster') ?></a>
         <a href="<?= BASE_URL ?>admin/settings/index.php"><?= trans('settings') ?></a>
         <?php endif; ?>
         <a href="<?= BASE_URL ?>admin/change-password.php"><?= trans('change_password') ?></a>
