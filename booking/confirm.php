@@ -1,4 +1,6 @@
 <?php require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../includes/payment-gateway.php';
+require_once __DIR__ . '/../includes/notifications.php';
 require_login();
 
 if (empty($_SESSION['pending_booking']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -6,6 +8,9 @@ if (empty($_SESSION['pending_booking']) || $_SERVER['REQUEST_METHOD'] !== 'POST'
     exit;
 }
 $pb = $_SESSION['pending_booking'];
+
+$depositPercentage = (int)get_setting($pdo, 'deposit_percentage', 0);
+$depositAmount = $depositPercentage > 0 ? ($pb['total_price'] * $depositPercentage / 100) : $pb['total_price'];
 
 $pdo->beginTransaction();
 try {
@@ -35,14 +40,17 @@ try {
 
     $reference = 'HB-' . date('Ymd') . '-' . strtoupper(substr(bin2hex(random_bytes(3)), 0, 6));
 
+    $initialStatus = $depositPercentage > 0 ? 'pending' : 'confirmed';
+
     $stmt = $pdo->prepare(
-        'INSERT INTO bookings (booking_reference, user_id, room_id, check_in, check_out, num_guests, total_price, coupon_id, discount_amount, status, special_requests)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, "confirmed", ?)'
+        'INSERT INTO bookings (booking_reference, user_id, room_id, check_in, check_out, num_guests, total_price, coupon_id, discount_amount, deposit_amount, amount_paid, payment_status, status, special_requests)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, "pending", ?, ?)'
     );
     $stmt->execute([
         $reference, $_SESSION['user_id'], $pb['room_id'],
         $pb['check_in'], $pb['check_out'], $pb['guests'],
-        $pb['total_price'], $couponId, $discountAmount,
+        $pb['total_price'], $couponId, $discountAmount, $depositAmount,
+        $initialStatus,
         $pb['special_requests'] ?? null,
     ]);
     $bookingId = $pdo->lastInsertId();
@@ -69,11 +77,21 @@ try {
     $pdo->commit();
     $logMsg = "Booking $reference created, {$pb['check_in']} to {$pb['check_out']}";
     if ($couponId) $logMsg .= " (coupon {$pb['coupon_code']} applied, -$" . number_format($discountAmount, 2) . ")";
+    if ($depositPercentage > 0) $logMsg .= " (deposit required: $depositPercentage%)";
     log_activity($pdo, 'booking.created', $logMsg);
+
+    try {
+        $notifier = new NotificationService($pdo);
+        $notifier->sendBookingConfirmationToGuest($bookingId);
+        $notifier->sendBookingNotificationToAdmin($bookingId);
+    } catch (Exception $e) {
+        error_log('Notification failed: ' . $e->getMessage());
+    }
 
     unset($_SESSION['pending_booking']);
     $_SESSION['last_booking_reference'] = $reference;
     $_SESSION['last_booking_id'] = $bookingId;
+    $_SESSION['pending_deposit'] = $depositAmount;
     header('Location: ' . BASE_URL . 'booking/payment.php');
     exit;
 

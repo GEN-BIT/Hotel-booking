@@ -1,4 +1,5 @@
 <?php require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../includes/notifications.php';
 require_login();
 
 $bookingId = (int)($_POST['booking_id'] ?? $_GET['booking_id'] ?? 0);
@@ -15,6 +16,14 @@ if (in_array($booking['status'], ['confirmed', 'pending'])) {
     $stmt = $pdo->prepare('UPDATE bookings SET status = "cancelled" WHERE id = ?');
     $stmt->execute([$bookingId]);
     log_activity($pdo, 'booking.cancelled_by_guest', "Booking {$booking['booking_reference']} cancelled by guest");
+    
+    try {
+        $notifier = new NotificationService($pdo);
+        $notifier->sendCancellationToGuest($bookingId);
+        $notifier->sendCancellationToAdmin($bookingId);
+    } catch (Exception $e) {
+        error_log('Cancellation notification failed: ' . $e->getMessage());
+    }
 }
 
 header('Location: ' . BASE_URL . 'account/reservations.php');

@@ -545,4 +545,12 @@ return [
     'item_deleted' => '[FR] Item deleted successfully.',
     'items_deleted' => '[FR] {count} items deleted successfully.',
     'operation_completed' => '[FR] Operation completed successfully.',
+    'amount_paid' => '[FR] Amount Paid',
+    'balance_due' => '[FR] Balance Due',
+    'deposit_required' => '[FR] Deposit Required',
+    'payment_complete' => '[FR] Payment Complete',
+    'payment_summary' => '[FR] Payment Summary',
+    'reconcile_payments' => '[FR] Reconcile Payments',
+    'notifications_label' => '[FR] Notifications',
+    'email_log' => '[FR] Email Log',
 ];

@@ -1,5 +1,6 @@
 <?php require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../includes/mailer.php';
+require_once __DIR__ . '/../includes/notifications.php';
 
 $extraCSS = [BASE_URL . 'assets/css/auth.css'];
 $extraJS = [BASE_URL . 'assets/js/auth.js'];
@@ -52,11 +53,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         if ($role === 'guest') {
                             $link = BASE_URL . 'auth/verify.php?token=' . $token;
-                            $sent = send_mail($pdo, $email, trans('verify_your_account'),
-                                "Hi $name,<br><br>Please verify your account by clicking the link below:<br>
-                                 <a href=\"$link\">$link</a>");
-
-                            if (!$sent) {
+                            $notifier = new NotificationService($pdo);
+                            $result = $notifier->notify(
+                                $roleId,
+                                trans('verify_your_account'),
+                                "Hi $name, please verify your account by clicking: $link",
+                                $email,
+                                trans('verify_your_account'),
+                                "<p>Hi $name,</p><p>Please verify your account by clicking the link below:</p><p><a href=\"$link\">$link</a></p>"
+                            );
+                            
+                            if (!$result['email'] && !$result['email_error']) {
                                 $devLink = $link;
                             } else {
                                 header('Location: ' . BASE_URL . 'auth/login.php?registered=1');
@@ -87,13 +94,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt->execute([$token, $expires, $user['id']]);
 
                     $link = BASE_URL . 'auth/reset-password.php?token=' . $token;
-                    $sent = send_mail($pdo, $email, 'Reset your password',
-                        "Hi {$user['full_name']},<br><br>Click below to reset your password (valid 1 hour):<br>
-                         <a href=\"$link\">$link</a>");
-
-                    if (!$sent) {
-                        $devLink = $link;
-                    }
+                    $notifier = new NotificationService($pdo);
+                    $notifier->notify(
+                        $user['id'],
+                        'Reset your password',
+                        "Hi {$user['full_name']}, click below to reset your password (valid 1 hour): $link",
+                        $email,
+                        'Reset your password',
+                        "<p>Hi {$user['full_name']},</p><p>Click below to reset your password (valid 1 hour):</p><p><a href=\"$link\">$link</a></p>"
+                    );
+                    
+                    $success = trans('forgot_success_msg');
                 }
             }
         } else {

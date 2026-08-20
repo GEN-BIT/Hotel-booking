@@ -35,6 +35,7 @@ require_role_any(['admin', 'staff']);
         <a href="<?= BASE_URL ?>admin/bookings/index.php"><?= trans('bookings') ?></a>
         <a href="<?= BASE_URL ?>admin/guests/index.php"><?= trans('guests') ?></a>
         <a href="<?= BASE_URL ?>admin/payments/index.php"><?= trans('payments') ?></a>
+        <a href="<?= BASE_URL ?>admin/payments/reconcile.php"><?= trans('reconcile_payments') ?></a>
         <a href="<?= BASE_URL ?>admin/coupons/index.php"><?= trans('coupons') ?></a>
         <a href="<?= BASE_URL ?>admin/reviews/index.php"><?= trans('reviews') ?></a>
         <a href="<?= BASE_URL ?>admin/service-orders/index.php"><?= trans('service_orders') ?></a>
@@ -45,6 +46,8 @@ require_role_any(['admin', 'staff']);
         <a href="<?= BASE_URL ?>admin/reports/room-performance.php"><?= trans('room_performance') ?></a>
         <a href="<?= BASE_URL ?>admin/reports/cancellations.php"><?= trans('cancellations') ?></a>
         <a href="<?= BASE_URL ?>admin/activity-log.php"><?= trans('activity_log') ?></a>
+        <a href="<?= BASE_URL ?>admin/notifications/send.php"><?= trans('notifications_label') ?></a>
+        <a href="<?= BASE_URL ?>admin/notifications/email-log.php"><?= trans('email_log') ?></a>
         <?php if (current_role() === 'admin'): ?>
         <a href="<?= BASE_URL ?>admin/staff/index.php"><?= trans('staff') ?></a>
         <a href="<?= BASE_URL ?>admin/settings/index.php"><?= trans('settings') ?></a>

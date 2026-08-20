@@ -11,14 +11,15 @@ $payments = $stmt->fetchAll();
 ?>
 <h1>Payments</h1>
 <table class="data-table">
-    <tr><th>Booking</th><th>Guest</th><th>Amount</th><th>Method</th><th>Status</th><th></th></tr>
+    <tr><th>Booking</th><th>Guest</th><th>Amount</th><th>Method</th><th>Payment Status</th><th>Booking Status</th><th></th></tr>
     <?php foreach ($payments as $p): ?>
     <tr>
         <td><?= htmlspecialchars($p['booking_reference']) ?></td>
         <td><?= htmlspecialchars($p['full_name']) ?></td>
         <td>$<?= number_format($p['amount'], 2) ?></td>
         <td><?= htmlspecialchars($p['method']) ?></td>
-        <td><?= htmlspecialchars($p['status']) ?></td>
+        <td><span class="status status-<?= htmlspecialchars($p['status']) ?>"><?= htmlspecialchars($p['status']) ?></span></td>
+        <td><span class="status status-<?= htmlspecialchars($p['payment_status'] ?? 'pending') ?>"><?= htmlspecialchars($p['payment_status'] ?? 'pending') ?></span></td>
         <td><a href="view.php?id=<?= (int)$p['id'] ?>">View</a></td>
     </tr>
     <?php endforeach; ?>
