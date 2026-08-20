@@ -17,6 +17,7 @@ foreach ($fields as $f) $values[$f] = get_setting($pdo, $f);
 <h1>Email Settings</h1>
 <?php if ($success): ?><p class="success"><?= htmlspecialchars($success) ?></p><?php endif; ?>
 <form method="post">
+          <?= csrf_field() ?>
     <label>SMTP Host <input type="text" name="smtp_host" value="<?= htmlspecialchars($values['smtp_host']) ?>"></label>
     <label>SMTP Port <input type="number" name="smtp_port" value="<?= htmlspecialchars($values['smtp_port']) ?>"></label>
     <label>SMTP Username <input type="text" name="smtp_username" value="<?= htmlspecialchars($values['smtp_username']) ?>"></label>

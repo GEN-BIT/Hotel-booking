@@ -15,7 +15,7 @@ if (!in_array($booking['status'], ['pending','confirmed','checked_in'])) {
 $services = $pdo->query('SELECT * FROM services WHERE is_active = 1 ORDER BY name')->fetchAll();
 $error = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') { if (!verify_csrf($_POST['csrf_token'] ?? '')) { $error = 'Invalid or expired CSRF token. Please try again.'; } else {
     $serviceId = (int)($_POST['service_id'] ?? 0);
     $quantity = max(1, (int)($_POST['quantity'] ?? 1));
 
@@ -35,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 }
+}
 
 require __DIR__ . '/../includes/header.php';
 ?>
@@ -45,6 +46,7 @@ require __DIR__ . '/../includes/header.php';
     <p>No services are available right now.</p>
 <?php else: ?>
 <form method="post">
+          <?= csrf_field() ?>
     <input type="hidden" name="booking_id" value="<?= $bookingId ?>">
     <label>Service
         <select name="service_id" required>

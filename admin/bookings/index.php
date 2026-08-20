@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('manage_bookings');
 
 $statusFilter = $_GET['status'] ?? '';
 $sql = 'SELECT b.*, u.full_name, r.room_number FROM bookings b

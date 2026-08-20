@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('manage_rooms');
 $error = '';
 $allAmenities = $pdo->query('SELECT * FROM amenities ORDER BY name')->fetchAll();
 
@@ -30,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <h1>Add Room Type</h1>
 <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
 <form method="post">
+          <?= csrf_field() ?>
     <label>Name <input type="text" name="name" required></label>
     <label>Description <textarea name="description"></textarea></label>
     <label>Base Price <input type="number" step="0.01" name="base_price" required></label>

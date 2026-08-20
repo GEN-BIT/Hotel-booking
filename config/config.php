@@ -1,9 +1,148 @@
 <?php
 session_start();
-define('BASE_URL', 'http://localhost/hotel-booking/');
+
+// Load environment variables
+$envFile = __DIR__ . '/../.env';
+if (file_exists($envFile)) {
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0) continue;
+        if (strpos($line, '=') === false) continue;
+        list($key, $value) = explode('=', $line, 2);
+        $key = trim($key);
+        $value = trim($value);
+        if (!array_key_exists($key, $_ENV)) {
+            $_ENV[$key] = $value;
+        }
+    }
+}
+
+// Base URL - prefer APP_URL env var, fallback to default
+define('BASE_URL', $_ENV['APP_URL'] ?? 'http://localhost/hotel-booking/');
 define('DEFAULT_LANG', 'en');
 define('SUPPORTED_LANGS', ['en', 'rw', 'fr']);
+
+// HTTPS enforcement
+$forceHttps = ($_ENV['FORCE_HTTPS'] ?? 'false') === 'true';
+if ($forceHttps && (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on' || $_SERVER['SERVER_PORT'] != 443)) {
+    $httpsUrl = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    header('Location: ' . $httpsUrl, true, 301);
+    exit;
+}
+
+// Security headers
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('X-XSS-Protection: 1; mode=block');
+header('Referrer-Policy: strict-origin-when-cross-origin');
+if ($forceHttps) {
+    header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
+}
+
 require_once __DIR__ . '/db.php';
+
+/**
+ * CSRF Token Functions
+ */
+function csrf_token() {
+    if (empty($_SESSION['csrf_token']) || time() > ($_SESSION['csrf_expires'] ?? 0)) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        $_SESSION['csrf_expires'] = time() + ($_ENV['CSRF_TOKEN_LIFETIME'] ?? 1800);
+    }
+    return $_SESSION['csrf_token'];
+}
+
+function csrf_field() {
+    return '<input type="hidden" name="csrf_token" value="' . htmlspecialchars(csrf_token()) . '">';
+}
+
+function verify_csrf($token) {
+    if (empty($token) || empty($_SESSION['csrf_token'])) {
+        return false;
+    }
+    if (time() > ($_SESSION['csrf_expires'] ?? 0)) {
+        unset($_SESSION['csrf_token']);
+        return false;
+    }
+    return hash_equals($_SESSION['csrf_token'], $token);
+}
+
+/**
+ * Rate Limiting Functions
+ */
+function check_rate_limit($action, $maxAttempts = 5, $windowSeconds = 300) {
+    $key = 'rate_limit_' . $action . '_' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+    $now = time();
+    
+    if (!isset($_SESSION[$key])) {
+        $_SESSION[$key] = ['count' => 0, 'first_attempt' => $now];
+    }
+    
+    $data = $_SESSION[$key];
+    if ($now - $data['first_attempt'] > $windowSeconds) {
+        $_SESSION[$key] = ['count' => 1, 'first_attempt' => $now];
+        return true;
+    }
+    
+    if ($data['count'] >= $maxAttempts) {
+        return false;
+    }
+    
+    $_SESSION[$key]['count']++;
+    return true;
+}
+
+/**
+ * Input sanitization helper
+ */
+function clean_input($data) {
+    if (is_array($data)) {
+        return array_map('clean_input', $data);
+    }
+    return trim(htmlspecialchars($data, ENT_QUOTES, 'UTF-8'));
+}
+
+/**
+ * Current user staff permissions
+ */
+function current_permissions() {
+    if (!isset($_SESSION['user_id'])) {
+        return [];
+    }
+    
+    static $permissions = null;
+    if ($permissions !== null) {
+        return $permissions;
+    }
+    
+    global $pdo;
+    $stmt = $pdo->prepare('SELECT permissions FROM staff WHERE user_id = ?');
+    $stmt->execute([$_SESSION['user_id']]);
+    $permString = $stmt->fetchColumn();
+    
+    if ($permString) {
+        $permissions = array_filter(array_map('trim', explode(',', $permString)));
+    } else {
+        $permissions = [];
+    }
+    
+    return $permissions;
+}
+
+function has_permission($permission) {
+    $role = current_role();
+    if ($role === 'admin') {
+        return true;
+    }
+    return in_array($permission, current_permissions(), true);
+}
+
+function require_permission($permission) {
+    if (!has_permission($permission)) {
+        http_response_code(403);
+        die('Access denied. Insufficient permissions.');
+    }
+}
 
 /**
  * Get the current language from session or default.

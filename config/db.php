@@ -1,9 +1,9 @@
 <?php
-// Database connection (PDO)
-$host = 'localhost';
-$dbname = 'hotel_booking';
-$dbuser = 'root';
-$dbpass = ''; // set your XAMPP mysql root password here if you have one
+// Database connection (PDO) - uses environment variables from .env
+$host = $_ENV['DB_HOST'] ?? 'localhost';
+$dbname = $_ENV['DB_NAME'] ?? 'hotel_booking';
+$dbuser = $_ENV['DB_USER'] ?? 'root';
+$dbpass = $_ENV['DB_PASS'] ?? '';
 
 try {
     $pdo = new PDO(
@@ -16,5 +16,8 @@ try {
         ]
     );
 } catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
+    if (($_ENV['APP_DEBUG'] ?? 'false') === 'true') {
+        die("Database connection failed: " . htmlspecialchars($e->getMessage()));
+    }
+    die("Database connection failed. Please contact the administrator.");
 }

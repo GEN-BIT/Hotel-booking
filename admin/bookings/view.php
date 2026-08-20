@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('manage_bookings');
 
 $id = (int)($_GET['id'] ?? 0);
 $stmt = $pdo->prepare('SELECT b.*, u.full_name, u.email, r.room_number, rt.name AS type_name, c.code AS coupon_code

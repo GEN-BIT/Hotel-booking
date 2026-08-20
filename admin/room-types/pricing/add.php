@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <h1>Add Seasonal Pricing</h1>
 <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
 <form method="post">
+          <?= csrf_field() ?>
     <label>Price <input type="number" step="0.01" name="price" required></label>
     <label>Valid From <input type="date" name="valid_from" required></label>
     <label>Valid Until <input type="date" name="valid_until" required></label>

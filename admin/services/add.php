@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('manage_rooms');
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -19,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <h1>Add Service</h1>
 <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
 <form method="post">
+          <?= csrf_field() ?>
     <label>Name <input type="text" name="name" required placeholder="e.g. Airport Shuttle"></label>
     <label>Description <textarea name="description"></textarea></label>
     <label>Price <input type="number" step="0.01" name="price" required></label>

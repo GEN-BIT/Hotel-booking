@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('manage_rooms');
 $amenities = $pdo->query('SELECT * FROM amenities ORDER BY name')->fetchAll();
 ?>
 <h1><?= trans('amenities') ?></h1>

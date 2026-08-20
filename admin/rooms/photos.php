@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('manage_rooms');
 
 $roomId = (int)($_GET['room_id'] ?? 0);
 $stmt = $pdo->prepare('SELECT * FROM rooms WHERE id = ?');
@@ -133,6 +134,7 @@ $photos = $photos->fetchAll();
 <?php if ($success): ?><p class="success"><?= htmlspecialchars($success) ?></p><?php endif; ?>
 
 <form method="post" enctype="multipart/form-data" style="margin-bottom:2rem; max-width:600px;">
+          <?= csrf_field() ?>
     <label>Photo Category
         <select name="photo_category">
             <option value="">-- Select Category --</option>
@@ -171,6 +173,7 @@ $photos = $photos->fetchAll();
                 <div style="display:flex; gap:0.5rem; margin-bottom:0.5rem;">
                     <?php if ($index > 0): ?>
                     <form method="post" style="flex:1;">
+          <?= csrf_field() ?>
                         <input type="hidden" name="photo_id" value="<?= (int)$p['id'] ?>">
                         <input type="hidden" name="direction" value="up">
                         <button type="submit" name="move_photo" class="cta" style="width:100%; padding:0.4rem; font-size:0.85rem;">↑ Up</button>
@@ -178,6 +181,7 @@ $photos = $photos->fetchAll();
                     <?php endif; ?>
                     <?php if ($index < count($photos) - 1): ?>
                     <form method="post" style="flex:1;">
+          <?= csrf_field() ?>
                         <input type="hidden" name="photo_id" value="<?= (int)$p['id'] ?>">
                         <input type="hidden" name="direction" value="down">
                         <button type="submit" name="move_photo" class="cta" style="width:100%; padding:0.4rem; font-size:0.85rem;">↓ Down</button>
@@ -185,11 +189,13 @@ $photos = $photos->fetchAll();
                     <?php endif; ?>
                 </div>
                 <form method="post" style="margin-bottom:0.5rem;">
+          <?= csrf_field() ?>
                     <input type="hidden" name="photo_id" value="<?= (int)$p['id'] ?>">
                     <input type="text" name="caption" value="<?= htmlspecialchars($p['caption'] ?? '') ?>" placeholder="Add caption..." style="width:100%; padding:0.4rem; border:1px solid var(--color-border); border-radius:var(--radius); background:var(--color-bg); color:var(--color-text); font-size:0.85rem;">
                     <button type="submit" name="update_caption" class="cta" style="width:100%; margin-top:0.5rem; padding:0.4rem; font-size:0.85rem;">Save Caption</button>
                 </form>
                 <form method="post" onsubmit="return confirm('Delete this photo?')">
+          <?= csrf_field() ?>
                     <input type="hidden" name="photo_id" value="<?= (int)$p['id'] ?>">
                     <button type="submit" name="delete_photo" class="cta-danger" style="width:100%; padding:0.4rem; font-size:0.85rem;">Delete</button>
                 </form>

@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('view_reports');
 
 $stmt = $pdo->query(
     'SELECT b.booking_reference, u.full_name, b.check_in, b.check_out, b.total_price, b.updated_at

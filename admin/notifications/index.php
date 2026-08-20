@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('view_reports');
 
 $stmt = $pdo->query(
     'SELECT n.*, u.full_name FROM notifications n JOIN users u ON n.user_id = u.id

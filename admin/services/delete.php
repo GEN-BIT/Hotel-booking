@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . '/../../includes/admin-header.php';
+require_permission('manage_rooms');
 $id = (int)($_GET['id'] ?? 0);
 
 if ($id) {

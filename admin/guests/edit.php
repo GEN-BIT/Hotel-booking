@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('manage_guests');
 require_role_any(['admin']);
 
 $id = (int)($_GET['id'] ?? $_POST['id'] ?? 0);
@@ -24,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <h1>Edit Guest</h1>
 <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
 <form method="post">
+          <?= csrf_field() ?>
     <label>Full Name <input type="text" name="full_name" value="<?= htmlspecialchars($guest['full_name']) ?>" required></label>
     <label>Phone <input type="text" name="phone" value="<?= htmlspecialchars($guest['phone'] ?? '') ?>"></label>
     <button type="submit">Save Changes</button>

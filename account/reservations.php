@@ -33,7 +33,8 @@ require __DIR__ . '/../includes/header.php';
             <a href="reservation-details.php?id=<?= (int)$b['id'] ?>"><?= trans('view') ?></a>
             <?php if (in_array($b['status'], ['pending','confirmed'])): ?>
                 &nbsp;|&nbsp;
-                <form method="post" action="<?= BASE_URL ?>booking/cancel.php" style="display:inline"
+                <form method="post" action="<?= BASE_URL ?>
+          <?= csrf_field() ?>booking/cancel.php" style="display:inline"
                       onsubmit="return confirm('<?= trans('cancel_reservation_confirm') ?>');">
                     <input type="hidden" name="booking_id" value="<?= (int)$b['id'] ?>">
                     <button type="submit" class="link-btn"><?= trans('cancel') ?></button>

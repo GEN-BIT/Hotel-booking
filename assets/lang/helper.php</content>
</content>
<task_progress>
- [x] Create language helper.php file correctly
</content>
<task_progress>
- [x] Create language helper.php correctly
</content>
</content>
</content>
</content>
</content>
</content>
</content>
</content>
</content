@@ -1,6 +1,0 @@
-<?php
-/**
- * Language helper functions
- */
-return [
-    'language_helper_placeholder' => 'Language helper functions

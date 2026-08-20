@@ -127,6 +127,7 @@ require __DIR__ . '/../includes/header.php';
 
     <p class="price"><?= trans('total_price_label') ?> $<?= number_format($total, 2) ?></p>
     <form method="post" action="confirm.php">
+          <?= csrf_field() ?>
         <button type="submit"><?= trans('confirm_booking') ?></button>
     </form>
 <?php endif; ?>

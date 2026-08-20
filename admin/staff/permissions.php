@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <h1>Permissions — <?= htmlspecialchars($row['full_name']) ?></h1>
 <form method="post">
+          <?= csrf_field() ?>
     <?php foreach ($available as $perm): ?>
     <label class="checkbox"><input type="checkbox" name="permissions[]" value="<?= $perm ?>" <?= in_array($perm, $current) ? 'checked' : '' ?>> <?= str_replace('_',' ',ucfirst($perm)) ?></label>
     <?php endforeach; ?>

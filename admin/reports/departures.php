@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('view_reports');
 
 $today = date('Y-m-d');
 $count = (int)$pdo->query('SELECT COUNT(*) FROM bookings WHERE check_out = CURDATE() AND status = "checked_in"')->fetchColumn();

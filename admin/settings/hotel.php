@@ -17,6 +17,7 @@ foreach ($fields as $f) $values[$f] = get_setting($pdo, $f);
 <h1>Hotel Information</h1>
 <?php if ($success): ?><p class="success"><?= htmlspecialchars($success) ?></p><?php endif; ?>
 <form method="post">
+          <?= csrf_field() ?>
     <label>Hotel Name <input type="text" name="hotel_name" value="<?= htmlspecialchars($values['hotel_name']) ?>"></label>
     <label>Address <input type="text" name="hotel_address" value="<?= htmlspecialchars($values['hotel_address']) ?>"></label>
     <label>Phone <input type="text" name="hotel_phone" value="<?= htmlspecialchars($values['hotel_phone']) ?>"></label>

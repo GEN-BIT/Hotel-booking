@@ -29,6 +29,7 @@ $roomTypeId = $pricing['room_type_id'];
 <h1>Edit Seasonal Pricing</h1>
 <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
 <form method="post">
+          <?= csrf_field() ?>
     <label>Price <input type="number" step="0.01" name="price" value="<?= htmlspecialchars($pricing['price']) ?>" required></label>
     <label>Valid From <input type="date" name="valid_from" value="<?= htmlspecialchars($pricing['valid_from']) ?>" required></label>
     <label>Valid Until <input type="date" name="valid_until" value="<?= htmlspecialchars($pricing['valid_until']) ?>" required></label>

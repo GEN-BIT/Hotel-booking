@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('view_reports');
 
 $today = date('Y-m-d');
 $stmt = $pdo->prepare(

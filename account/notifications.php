@@ -24,6 +24,7 @@ require __DIR__ . '/../includes/header.php';
         <small><?= htmlspecialchars($n['created_at']) ?></small>
         <?php if (!$n['is_read']): ?>
         <form method="post">
+          <?= csrf_field() ?>
             <input type="hidden" name="mark_read" value="<?= (int)$n['id'] ?>">
             <button type="submit" class="link-btn">Mark as read</button>
         </form>

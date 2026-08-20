@@ -33,6 +33,7 @@ require __DIR__ . '/../includes/admin-header.php';
 <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
 <?php if ($success): ?><p class="success"><?= htmlspecialchars($success) ?></p><?php endif; ?>
 <form method="post">
+          <?= csrf_field() ?>
     <label>Full Name <input type="text" name="full_name" value="<?= htmlspecialchars($user['full_name']) ?>" required></label>
     <label>Email <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" required></label>
     <label>Phone <input type="text" name="phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>"></label>

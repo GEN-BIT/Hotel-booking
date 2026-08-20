@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('view_reports');
 
 $total = (int)$pdo->query('SELECT COUNT(*) FROM rooms')->fetchColumn();
 $occupied = (int)$pdo->query('SELECT COUNT(*) FROM rooms WHERE status = "occupied"')->fetchColumn();

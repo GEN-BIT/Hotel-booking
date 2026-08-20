@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('manage_rooms');
 
 $rooms = $pdo->query(
     'SELECT r.*, rt.name AS type_name FROM rooms r

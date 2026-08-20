@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('manage_rooms');
 
 $id = (int)($_GET['id'] ?? $_POST['id'] ?? 0);
 $stmt = $pdo->prepare('SELECT * FROM rooms WHERE id = ?');
@@ -30,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <h1>Edit Room</h1>
 <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
 <form method="post">
+          <?= csrf_field() ?>
     <label>Room Number <input type="text" name="room_number" value="<?= htmlspecialchars($room['room_number']) ?>" required></label>
     <label>Room Type
         <select name="room_type_id" required>

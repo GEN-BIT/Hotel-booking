@@ -17,6 +17,7 @@ $deposit = get_setting($pdo, 'deposit_percentage', '0');
 <h1>Payment Settings</h1>
 <?php if ($success): ?><p class="success"><?= htmlspecialchars($success) ?></p><?php endif; ?>
 <form method="post">
+          <?= csrf_field() ?>
     <fieldset>
         <legend>Enabled Payment Methods</legend>
         <?php foreach ($methods as $m): ?>

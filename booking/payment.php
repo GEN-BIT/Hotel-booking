@@ -1,4 +1,4 @@
-?php require_once __DIR__ . '/../config/config.php';
+<?php require_once __DIR__ . '/../config/config.php';
 require_login();
 
 $bookingId = $_SESSION['last_booking_id'] ?? 0;
@@ -50,6 +50,7 @@ require __DIR__ . '/../includes/header.php';
 <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
 <p class="notice"><?= trans('simulated_payment_notice') ?></p>
 <form method="post">
+          <?= csrf_field() ?>
     <fieldset>
         <legend><?= trans('select_payment_method') ?></legend>
         <?php foreach ($enabledMethods as $m): ?>

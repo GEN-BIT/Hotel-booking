@@ -1,0 +1,95 @@
+--- a/admin/coupons/index.php
++++ b/admin/coupons/index.php
+@@ -1,5 +1,6 @@
+ <?php require __DIR__ . '/../../includes/admin-header.php';
++require_permission('manage_bookings');
+ 
+ $coupons = $pdo->query('SELECT * FROM coupons ORDER BY created_at DESC')->fetchAll();
+ ?>
+--- a/admin/coupons/add.php
++++ b/admin/coupons/add.php
+@@ -4,6 +4,9 @@
+ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
++    if (!verify_csrf($_POST['csrf_token'] ?? '')) {
++        $error = 'Invalid or expired CSRF token. Please try again.';
++    } else {
+     $code = strtoupper(trim($_POST['code'] ?? ''));
+     $type = $_POST['discount_type'] ?? 'percentage';
+     $value = (float)($_POST['discount_value'] ?? 0);
+@@ -36,6 +39,7 @@
+             log_activity($pdo, 'coupon.added', "Coupon $code created ($type, $value)");
+             header('Location: index.php');
+             exit;
+         }
+     }
++    }
+ }
+ ?>
+ <h1>Add Coupon</h1>
+@@ -41,6 +45,7 @@
+ <form method="post">
++    <?= csrf_field() ?>
+     <label>Code <input type="text" name="code" required placeholder="e.g. SUMMER25"></label>
+--- a/admin/coupons/edit.php
++++ b/admin/coupons/edit.php
+@@ -10,6 +10,9 @@
+ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
++    if (!verify_csrf($_POST['csrf_token'] ?? '')) {
++        $error = 'Invalid or expired CSRF token. Please try again.';
++    } else {
+     $type = $_POST['discount_type'] ?? 'percentage';
+     $value = (float)($_POST['discount_value'] ?? 0);
+     $maxUses = trim($_POST['max_uses'] ?? '');
+@@ -33,6 +36,7 @@
+         ]);
+         header('Location: index.php');
+         exit;
+     }
++    }
+ }
+ ?>
+ <h1>Edit Coupon — <?= htmlspecialchars($coupon['code']) ?></h1>
+@@ -40,6 +44,7 @@
+ <form method="post">
++    <?= csrf_field() ?>
+     <label>Discount Type
+         <select name="discount_type">
+             <option value="percentage" <?= $coupon['discount_type'] === 'percentage' ? 'selected' : '' ?>>Percentage (%)</option>
+--- a/admin/coupons/delete.php
++++ b/admin/coupons/delete.php
+@@ -1,3 +1,5 @@
+ <?php require_once __DIR__ . '/../../config/config.php';
++require_permission('manage_bookings');
+ $id = (int)($_GET['id'] ?? 0);
+ $pdo->prepare('DELETE FROM coupons WHERE id = ?')->execute([$id]);
+--- a/admin/service-orders/index.php
++++ b/admin/service-orders/index.php
+@@ -1,5 +1,6 @@
+ <?php require __DIR__ . '/../../includes/admin-header.php';
++require_permission('manage_bookings');
+ 
+ $statusFilter = $_GET['status'] ?? '';
+ $sql = 'SELECT so.*, s.name AS service_name, b.booking_reference, u.full_name
+--- a/admin/service-orders/fulfill.php
++++ b/admin/service-orders/fulfill.php
+@@ -1,5 +1,6 @@
+ <?php require_once __DIR__ . '/../../config/config.php';
++require_permission('manage_bookings');
+ require_role_any(['admin', 'staff']);
+ $id = (int)($_GET['id'] ?? 0);
+ $stmt = $pdo->prepare('UPDATE service_orders SET status = "fulfilled" WHERE id = ? AND status = "requested"');
+--- a/admin/service-orders/cancel.php
++++ b/admin/service-orders/cancel.php
+@@ -1,5 +1,6 @@
+ <?php require_once __DIR__ . '/../../config/config.php';
++require_permission('manage_bookings');
+ require_role_any(['admin', 'staff']);
+ $id = (int)($_GET['id'] ?? 0);
+ $stmt = $pdo->prepare('UPDATE service_orders SET status = "cancelled" WHERE id = ? AND status = "requested"');
+--- a/admin/activity-log.php
++++ b/admin/activity-log.php
+@@ -1,3 +1,4 @@
+ <?php require __DIR__ . '/../../includes/admin-header.php';
++require_permission('view_reports');
+ 
+ $activity = $pdo->query('SELECT * FROM activity_log ORDER BY created_at DESC LIMIT 100')->fetchAll();

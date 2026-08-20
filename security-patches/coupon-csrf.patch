@@ -1,0 +1,53 @@
+--- a/admin/coupons/add.php
++++ b/admin/coupons/add.php
+@@ -4,6 +4,9 @@
+ 
+ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
++    if (!verify_csrf($_POST['csrf_token'] ?? '')) {
++        $error = 'Invalid or expired CSRF token. Please try again.';
++    } else {
+     $code = strtoupper(trim($_POST['code'] ?? ''));
+     $type = $_POST['discount_type'] ?? 'percentage';
+     $value = (float)($_POST['discount_value'] ?? 0);
+@@ -36,6 +39,7 @@
+             log_activity($pdo, 'coupon.added', "Coupon $code created ($type, $value)");
+             header('Location: index.php');
+             exit;
+         }
+     }
++    }
+ }
+ ?>
+ <h1>Add Coupon</h1>
+@@ -41,6 +45,7 @@
+ <form method="post">
++    <?= csrf_field() ?>
+     <label>Code <input type="text" name="code" required placeholder="e.g. SUMMER25"></label>
+     <label>Discount Type
+         <select name="discount_type">
+--- a/admin/coupons/edit.php
++++ b/admin/coupons/edit.php
+@@ -10,6 +10,9 @@
+ 
+ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
++    if (!verify_csrf($_POST['csrf_token'] ?? '')) {
++        $error = 'Invalid or expired CSRF token. Please try again.';
++    } else {
+     $type = $_POST['discount_type'] ?? 'percentage';
+     $value = (float)($_POST['discount_value'] ?? 0);
+     $maxUses = trim($_POST['max_uses'] ?? '');
+@@ -33,6 +36,7 @@
+         ]);
+         header('Location: index.php');
+         exit;
+     }
++    }
+ }
+ ?>
+ <h1>Edit Coupon — <?= htmlspecialchars($coupon['code']) ?></h1>
+@@ -40,6 +44,7 @@
+ <form method="post">
++    <?= csrf_field() ?>
+     <label>Discount Type
+         <select name="discount_type">
+             <option value="percentage" <?= $coupon['discount_type'] === 'percentage' ? 'selected' : '' ?>>Percentage (%)</option>

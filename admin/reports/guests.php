@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('view_reports');
 
 $totalGuests = (int)$pdo->query('SELECT COUNT(*) FROM users u JOIN roles r ON u.role_id=r.id WHERE r.name="guest"')->fetchColumn();
 $repeatGuests = (int)$pdo->query(

@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('view_reports');
 
 $guests = $pdo->query(
     'SELECT u.id, u.full_name FROM users u JOIN roles r ON u.role_id=r.id WHERE r.name="guest" ORDER BY u.full_name'
@@ -23,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <h1>Send Notification</h1>
 <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
 <form method="post">
+          <?= csrf_field() ?>
     <label>Guest
         <select name="user_id" required>
             <option value="">-- Select Guest --</option>

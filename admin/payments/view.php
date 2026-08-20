@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('manage_payments');
 
 $id = (int)($_GET['id'] ?? 0);
 $stmt = $pdo->prepare(

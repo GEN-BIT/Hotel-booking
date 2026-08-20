@@ -31,18 +31,22 @@ if (!$user || $user['reset_token_expires'] < date('Y-m-d H:i:s')) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $password = $_POST['password'] ?? '';
-    $confirm = $_POST['confirm_password'] ?? '';
-
-    if (strlen($password) < 8) {
-        $error = 'Password must be at least 8 characters.';
-    } elseif ($password !== $confirm) {
-        $error = 'Passwords do not match.';
+    if (!verify_csrf($_POST['csrf_token'] ?? '')) {
+        $error = 'Invalid or expired CSRF token. Please try again.';
     } else {
-        $hash = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare('UPDATE users SET password_hash = ?, reset_token = NULL, reset_token_expires = NULL WHERE id = ?');
-        $stmt->execute([$hash, $user['id']]);
-        $success = true;
+        $password = $_POST['password'] ?? '';
+        $confirm = $_POST['confirm_password'] ?? '';
+
+        if (strlen($password) < 8) {
+            $error = 'Password must be at least 8 characters.';
+        } elseif ($password !== $confirm) {
+            $error = 'Passwords do not match.';
+        } else {
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+            $stmt = $pdo->prepare('UPDATE users SET password_hash = ?, reset_token = NULL, reset_token_expires = NULL WHERE id = ?');
+            $stmt->execute([$hash, $user['id']]);
+            $success = true;
+        }
     }
 }
 
@@ -60,6 +64,7 @@ require __DIR__ . '/../includes/header.php';
       <?php else: ?>
         <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
         <form method="post">
+          <?= csrf_field() ?>
             <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
             <label>New Password <input type="password" name="password" required></label>
             <label>Confirm Password <input type="password" name="confirm_password" required></label>

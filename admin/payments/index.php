@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('manage_payments');
 
 $stmt = $pdo->query(
     'SELECT p.*, b.booking_reference, u.full_name FROM payments p

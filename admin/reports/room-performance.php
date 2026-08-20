@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('view_reports');
 
 $stmt = $pdo->query(
     'SELECT rt.name, COUNT(b.id) AS bookings, COALESCE(SUM(b.total_price),0) AS revenue,

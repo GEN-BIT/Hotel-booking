@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('manage_guests');
 
 $stmt = $pdo->prepare(
     'SELECT u.*, COUNT(b.id) AS booking_count FROM users u

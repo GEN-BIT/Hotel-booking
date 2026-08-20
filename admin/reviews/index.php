@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('manage_bookings');
 
 $stmt = $pdo->query(
     'SELECT rev.*, u.full_name, rt.name AS type_name FROM reviews rev

@@ -17,6 +17,7 @@ foreach ($fields as $f) $values[$f] = get_setting($pdo, $f);
 <h1>Booking Policy</h1>
 <?php if ($success): ?><p class="success"><?= htmlspecialchars($success) ?></p><?php endif; ?>
 <form method="post">
+          <?= csrf_field() ?>
     <label>Minimum Stay (nights) <input type="number" name="min_stay_nights" value="<?= htmlspecialchars($values['min_stay_nights']) ?>"></label>
     <label>Maximum Stay (nights) <input type="number" name="max_stay_nights" value="<?= htmlspecialchars($values['max_stay_nights']) ?>"></label>
     <label>Free Cancellation Window (hours before check-in) <input type="number" name="cancellation_window_hours" value="<?= htmlspecialchars($values['cancellation_window_hours']) ?>"></label>

@@ -21,6 +21,7 @@ require __DIR__ . '/../includes/header.php';
 ?>
 <h1><?= trans('guest_information') ?></h1>
 <form method="post">
+          <?= csrf_field() ?>
     <label><?= trans('special_requests_label') ?> <input type="text" name="special_requests" value="<?= htmlspecialchars($pb['special_requests'] ?? '') ?>"></label>
     <?php for ($i = 1; $i < $pb['guests']; $i++): ?>
         <label><?= trans('guest_name') ?> <?= $i + 1 ?> <input type="text" name="guest_name[]"></label>

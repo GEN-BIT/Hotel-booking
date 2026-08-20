@@ -42,6 +42,7 @@ require __DIR__ . '/../includes/header.php';
 <p><?= htmlspecialchars($booking['type_name']) ?> — <?= htmlspecialchars($booking['check_in']) ?> &rarr; <?= htmlspecialchars($booking['check_out']) ?></p>
 <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
 <form method="post">
+          <?= csrf_field() ?>
     <input type="hidden" name="booking_id" value="<?= $bookingId ?>">
     <fieldset>
         <legend>Rating</legend>

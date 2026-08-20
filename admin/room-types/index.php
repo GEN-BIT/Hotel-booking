@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('manage_rooms');
 $types = $pdo->query('SELECT * FROM room_types ORDER BY name')->fetchAll();
 ?>
 <h1><?= trans('room_types') ?></h1>

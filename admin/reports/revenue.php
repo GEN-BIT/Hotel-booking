@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/../../includes/admin-header.php';
+require_permission('view_reports');
 
 $stmt = $pdo->query(
     'SELECT DATE(paid_at) AS day, SUM(amount) AS total, COUNT(*) AS count

@@ -26,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <h1>Edit Staff</h1>
 <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
 <form method="post">
+          <?= csrf_field() ?>
     <label>Full Name <input type="text" name="full_name" value="<?= htmlspecialchars($staffMember['full_name']) ?>" required></label>
     <label>Position <input type="text" name="position" value="<?= htmlspecialchars($staffMember['position'] ?? '') ?>"></label>
     <label class="checkbox"><input type="checkbox" name="is_active" <?= $staffMember['is_active'] ? 'checked' : '' ?>> Active</label>

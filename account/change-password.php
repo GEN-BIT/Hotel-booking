@@ -4,25 +4,30 @@ require_login();
 $error = ''; $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $current = $_POST['current_password'] ?? '';
-    $new     = $_POST['new_password'] ?? '';
-    $confirm = $_POST['confirm_password'] ?? '';
-
-    $stmt = $pdo->prepare('SELECT password_hash FROM users WHERE id = ?');
-    $stmt->execute([$_SESSION['user_id']]);
-    $hash = $stmt->fetchColumn();
-
-    if (!password_verify($current, $hash)) {
-        $error = 'Current password is incorrect.';
-    } elseif (strlen($new) < 8) {
-        $error = 'New password must be at least 8 characters.';
-    } elseif ($new !== $confirm) {
-        $error = 'New passwords do not match.';
+    if (!verify_csrf($_POST['csrf_token'] ?? '')) {
+        $error = 'Invalid or expired CSRF token. Please try again.';
     } else {
-        $newHash = password_hash($new, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare('UPDATE users SET password_hash = ? WHERE id = ?');
-        $stmt->execute([$newHash, $_SESSION['user_id']]);
-        $success = 'Password changed successfully.';
+        $current = $_POST['current_password'] ?? '';
+        $new     = $_POST['new_password'] ?? '';
+        $confirm = $_POST['confirm_password'] ?? '';
+
+        $stmt = $pdo->prepare('SELECT password_hash FROM users WHERE id = ?');
+        $stmt->execute([$_SESSION['user_id']]);
+        $hash = $stmt->fetchColumn();
+
+        if (!password_verify($current, $hash)) {
+            $error = 'Current password is incorrect.';
+        } elseif (strlen($new) < 8) {
+            $error = 'New password must be at least 8 characters.';
+        } elseif ($new !== $confirm) {
+            $error = 'New passwords do not match.';
+        } else {
+            $newHash = password_hash($new, PASSWORD_DEFAULT);
+            $stmt = $pdo->prepare('UPDATE users SET password_hash = ? WHERE id = ?');
+            $stmt->execute([$newHash, $_SESSION['user_id']]);
+            session_regenerate_id(true);
+            $success = 'Password changed successfully.';
+        }
     }
 }
 
@@ -32,6 +37,7 @@ require __DIR__ . '/../includes/header.php';
 <?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
 <?php if ($success): ?><p class="success"><?= htmlspecialchars($success) ?></p><?php endif; ?>
 <form method="post">
+          <?= csrf_field() ?>
     <label><?= trans('current_password') ?> <input type="password" name="current_password" required></label>
     <label><?= trans('new_password') ?> <input type="password" name="new_password" required></label>
     <label><?= trans('confirm_new_password') ?> <input type="password" name="confirm_password" required></label>
