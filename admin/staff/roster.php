@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . '/../../includes/admin-header.php';
 require_permission('view_reports');
 
 $tab = $_GET['tab'] ?? 'leaves';
@@ -51,18 +52,18 @@ if ($tab === 'leaves') {
 ?>
 <h1>Staff Roster</h1>
 
-<div style="border-bottom: 1px solid var(--color-border); margin-bottom: 1.5rem;">
-    <a href="?tab=leaves" class="cta" style="<?= $tab === 'leaves' ? 'background: var(--color-primary);' : 'background: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-border);' ?>">Leave Requests</a>
-    <a href="?tab=shifts" class="cta" style="<?= $tab === 'shifts' ? 'background: var(--color-primary);' : 'background: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-border);' ?>">Shift Schedule</a>
+<div class="tab-nav">
+    <a href="?tab=leaves" class="<?= $tab === 'leaves' ? 'active' : '' ?>">Leave Requests</a>
+    <a href="?tab=shifts" class="<?= $tab === 'shifts' ? 'active' : '' ?>">Shift Schedule</a>
 </div>
 
 <?php if (isset($success)): ?><p class="success"><?= htmlspecialchars($success) ?></p><?php endif; ?>
 
 <?php if ($tab === 'leaves'): ?>
-<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
-    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius); padding: 1.5rem;">
-        <h3 style="margin: 0 0 1rem;">Request Leave</h3>
-        <form method="post">
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem;">
+    <div class="admin-card">
+        <h3>Request Leave</h3>
+        <form method="post" class="admin-form">
             <label>Staff
                 <select name="staff_id" required>
                     <option value="">-- Select Staff --</option>
@@ -80,7 +81,7 @@ if ($tab === 'leaves') {
 
     <div>
         <h3>Leave Requests</h3>
-        <table class="data-table">
+        <table class="admin-table">
             <tr><th>Staff</th><th>Type</th><th>Start</th><th>End</th><th>Status</th><th>Reason</th></tr>
             <?php foreach ($leaves as $l): ?>
             <tr>
@@ -88,7 +89,7 @@ if ($tab === 'leaves') {
                 <td><?= htmlspecialchars($l['leave_type']) ?></td>
                 <td><?= htmlspecialchars($l['start_date']) ?></td>
                 <td><?= htmlspecialchars($l['end_date']) ?></td>
-                <td><span class="status status-<?= htmlspecialchars($l['status']) ?>"><?= htmlspecialchars($l['status']) ?></span></td>
+                <td><span class="badge badge-<?= htmlspecialchars($l['status']) ?>"><?= htmlspecialchars($l['status']) ?></span></td>
                 <td><?= htmlspecialchars($l['reason'] ?? '—') ?></td>
             </tr>
             <?php endforeach; ?>
@@ -97,10 +98,10 @@ if ($tab === 'leaves') {
 </div>
 
 <?php else: ?>
-<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
-    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius); padding: 1.5rem;">
-        <h3 style="margin: 0 0 1rem;">Add Shift</h3>
-        <form method="post">
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem;">
+    <div class="admin-card">
+        <h3>Add Shift</h3>
+        <form method="post" class="admin-form">
             <label>Staff
                 <select name="staff_id" required>
                     <option value="">-- Select Staff --</option>
@@ -119,7 +120,7 @@ if ($tab === 'leaves') {
 
     <div>
         <h3>Shift Schedule</h3>
-        <table class="data-table">
+        <table class="admin-table">
             <tr><th>Staff</th><th>Date</th><th>Time</th><th>Role</th></tr>
             <?php foreach ($shifts as $s): ?>
             <tr>

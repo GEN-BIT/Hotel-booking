@@ -17,11 +17,11 @@ require_role_any(['admin', 'staff']);
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/themes.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/admin.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/responsive.css">
-    <script src="<?= BASE_URL ?>assets/js/language.js"></script>
+    <link rel="stylesheet" href="/hotel-booking/assets/css/themes.css">
+    <link rel="stylesheet" href="/hotel-booking/assets/css/style.css">
+    <link rel="stylesheet" href="/hotel-booking/assets/css/admin.css">
+    <link rel="stylesheet" href="/hotel-booking/assets/css/responsive.css">
+    <script src="/hotel-booking/assets/js/language.js"></script>
 </head>
 <body>
 <div class="admin-layout">

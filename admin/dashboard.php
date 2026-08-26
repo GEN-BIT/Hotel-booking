@@ -59,7 +59,7 @@ $departures = $pdo->query(
     <div class="stat-card"><h3><?= $stats['arrivals_today'] ?></h3><p><?= trans('arrivals_today') ?></p></div>
     <div class="stat-card"><h3><?= $stats['departures_today'] ?></h3><p><?= trans('departures_today') ?></p></div>
     <div class="stat-card"><h3><?= $stats['pending'] ?></h3><p><?= trans('pending_bookings') ?></p></div>
-    <div class="stat-card"><h3>$<?= number_format($stats['revenue'], 2) ?></h3><p><?= trans('total_revenue') ?></p></div>
+    <div class="stat-card"><h3><?= format_currency($stats['revenue']) ?></h3><p><?= trans('total_revenue') ?></p></div>
 </div>
 
 <div class="chart-card">

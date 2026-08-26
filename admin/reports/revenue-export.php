@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../../config/config.php';
 require_permission('view_reports');
 
 $startDate = $_GET['start_date'] ?? date('Y-m-d', strtotime('-30 days'));

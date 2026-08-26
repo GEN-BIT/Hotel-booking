@@ -9,7 +9,7 @@ $types = $pdo->query('SELECT * FROM room_types ORDER BY name')->fetchAll();
     <?php foreach ($types as $t): ?>
     <tr>
         <td><?= htmlspecialchars($t['name']) ?></td>
-        <td>$<?= number_format($t['base_price'], 2) ?></td>
+        <td><?= format_currency($t['base_price']) ?></td>
         <td><?= (int)$t['max_occupancy'] ?></td>
         <td><?= htmlspecialchars($t['bed_type'] ?? '—') ?></td>
         <td><?= htmlspecialchars($t['room_size'] ?? '—') ?></td>

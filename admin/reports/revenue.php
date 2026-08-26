@@ -15,7 +15,9 @@ $stmt = $pdo->prepare(
 $stmt->execute($params);
 $dailyRevenue = $stmt->fetchAll();
 
-$totalRevenue = (float)$pdo->prepare("SELECT COALESCE(SUM(amount),0) FROM payments $whereClause")->execute($params) ? $pdo->fetchColumn() : 0;
+$revStmt = $pdo->prepare("SELECT COALESCE(SUM(amount),0) FROM payments $whereClause");
+$revStmt->execute($params);
+$totalRevenue = (float)$revStmt->fetchColumn();
 $pendingRevenue = (float)$pdo->query('SELECT COALESCE(SUM(amount),0) FROM payments WHERE status = "pending"')->fetchColumn();
 
 $byMethod = $pdo->prepare(
@@ -42,8 +44,8 @@ $byMethod = $byMethod->fetchAll();
 </form>
 
 <div class="stat-grid">
-    <div class="stat-card"><h3>$<?= number_format($totalRevenue, 2) ?></h3><p><?= trans('total_revenue') ?></p></div>
-    <div class="stat-card"><h3>$<?= number_format($pendingRevenue, 2) ?></h3><p><?= trans('pending_bookings') ?></p></div>
+    <div class="stat-card"><h3><?= format_currency($totalRevenue) ?></h3><p><?= trans('total_revenue') ?></p></div>
+    <div class="stat-card"><h3><?= format_currency($pendingRevenue) ?></h3><p><?= trans('pending_bookings') ?></p></div>
 </div>
 
 <h3><?= trans('revenue') ?> — <?= date('M j, Y', strtotime($startDate)) ?> to <?= date('M j, Y', strtotime($endDate)) ?></h3>
@@ -53,7 +55,7 @@ $byMethod = $byMethod->fetchAll();
     <tr>
         <td><?= htmlspecialchars(ucfirst($m['method'])) ?></td>
         <td><?= (int)$m['count'] ?></td>
-        <td>$<?= number_format($m['total'], 2) ?></td>
+        <td><?= format_currency($m['total']) ?></td>
     </tr>
     <?php endforeach; ?>
 </table>
@@ -65,7 +67,7 @@ $byMethod = $byMethod->fetchAll();
     <tr>
         <td><?= htmlspecialchars($d['day']) ?></td>
         <td><?= (int)$d['count'] ?></td>
-        <td>$<?= number_format($d['total'], 2) ?></td>
+        <td><?= format_currency($d['total']) ?></td>
     </tr>
     <?php endforeach; ?>
 </table>

@@ -42,24 +42,26 @@ require __DIR__ . '/../includes/header.php';
     ?>
     <div class="room-card">
         <?php if ($photo): ?>
-        <img src="<?= BASE_URL . htmlspecialchars($photo) ?>" style="width:100%; height:180px; object-fit:cover; border-radius:var(--radius) var(--radius) 0 0; margin:-1.5rem -1.5rem 1rem; border:none;">
+        <img src="<?= BASE_URL . htmlspecialchars($photo) ?>" class="room-image" alt="<?= htmlspecialchars($rt['name']) ?>">
         <?php endif; ?>
-        <h2><?= htmlspecialchars($rt['name']) ?></h2>
-        <?php if ($rt['bed_type']): ?>
-            <p style="color:var(--color-muted); font-size:0.85rem; margin:0 0 0.5rem;">🛏 <?= htmlspecialchars($rt['bed_type']) ?> · 📐 <?= htmlspecialchars($rt['room_size'] ?? '') ?> · 📍 <?= htmlspecialchars($rt['building'] ?? '') ?></p>
-        <?php endif; ?>
-        <?php
-        $stmt = $pdo->prepare('SELECT AVG(rating) AS avg_rating, COUNT(*) AS total FROM reviews WHERE room_type_id = ?');
-        $stmt->execute([$rt['id']]);
-        $ratingSummary = $stmt->fetch();
-        ?>
-        <?php if ($ratingSummary['total'] > 0): ?>
-            <p class="stars">★ <?= number_format($ratingSummary['avg_rating'], 1) ?> (<?= (int)$ratingSummary['total'] ?>)</p>
-        <?php endif; ?>
-        <p><?= htmlspecialchars($rt['description']) ?></p>
-        <p><?= trans('up_to_guests', ['n' => (int)$rt['max_occupancy']]) ?></p>
-        <p class="price">$<?= number_format($rt['base_price'], 2) ?> <?= trans('per_night') ?></p>
-        <a href="details.php?id=<?= (int)$rt['id'] ?>"><?= trans('view_details') ?></a>
+        <div class="room-content">
+            <h2><?= htmlspecialchars($rt['name']) ?></h2>
+            <?php if ($rt['bed_type']): ?>
+                <p style="color:var(--color-muted); font-size:0.85rem; margin:0 0 0.5rem;">🛏 <?= htmlspecialchars($rt['bed_type']) ?> · 📐 <?= htmlspecialchars($rt['room_size'] ?? '') ?> · 📍 <?= htmlspecialchars($rt['building'] ?? '') ?></p>
+            <?php endif; ?>
+            <?php
+            $stmt = $pdo->prepare('SELECT AVG(rating) AS avg_rating, COUNT(*) AS total FROM reviews WHERE room_type_id = ?');
+            $stmt->execute([$rt['id']]);
+            $ratingSummary = $stmt->fetch();
+            ?>
+            <?php if ($ratingSummary['total'] > 0): ?>
+                <p class="stars">★ <?= number_format($ratingSummary['avg_rating'], 1) ?> (<?= (int)$ratingSummary['total'] ?>)</p>
+            <?php endif; ?>
+            <p><?= htmlspecialchars($rt['description']) ?></p>
+            <p><?= trans('up_to_guests', ['n' => (int)$rt['max_occupancy']]) ?></p>
+            <p class="price"><?= format_currency($rt['base_price']) ?> <?= trans('per_night') ?></p>
+            <a href="details.php?id=<?= (int)$rt['id'] ?>" class="cta"><?= trans('view_details') ?></a>
+        </div>
     </div>
 <?php endforeach; ?>
 </div>

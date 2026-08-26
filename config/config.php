@@ -17,21 +17,19 @@ if (file_exists($envFile)) {
     }
 }
 
-// HTTPS enforcement
-$forceHttps = ($_ENV['FORCE_HTTPS'] ?? 'false') === 'true';
-if ($forceHttps && (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on' || $_SERVER['SERVER_PORT'] != 443)) {
-    $httpsUrl = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-    header('Location: ' . $httpsUrl, true, 301);
-    exit;
-}
-
-// Allow HTTPS on localhost
+// Detect localhost
 $isLocalhost = in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1']) || strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost') !== false;
-if ($isLocalhost && isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
-    $_ENV['FORCE_HTTPS'] = 'true';
-}
 
-define('BASE_URL', $_ENV['APP_URL'] ?? ($isLocalhost ? 'https://localhost/hotel-booking/' : 'http://localhost/hotel-booking/'));
+// Build BASE_URL dynamically based on current request protocol
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$basePath = '/hotel-booking/';
+
+if ($isLocalhost) {
+    define('BASE_URL', $protocol . '://' . $host . $basePath);
+} else {
+    define('BASE_URL', rtrim($_ENV['APP_URL'] ?? 'http://localhost/hotel-booking/', '/') . '/');
+}
 define('DEFAULT_LANG', 'en');
 define('SUPPORTED_LANGS', ['en', 'rw', 'fr']);
 
@@ -40,7 +38,7 @@ header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 header('X-XSS-Protection: 1; mode=block');
 header('Referrer-Policy: strict-origin-when-cross-origin');
-if ($forceHttps) {
+if (!empty($_ENV['FORCE_HTTPS']) && $_ENV['FORCE_HTTPS'] === 'true') {
     header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
 }
 

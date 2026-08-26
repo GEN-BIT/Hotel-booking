@@ -4,23 +4,23 @@
 
 :root,
 [data-theme="luxury"] {
-  --color-bg: #f6f1e7;
+  --color-bg: #ffffff;
   --color-surface: #ffffff;
-  --color-header: #14213d;
-  --color-header-contrast: #f6f1e7;
-  --color-primary: #14213d;
+  --color-header: #003580;
+  --color-header-contrast: #ffffff;
+  --color-primary: #0071c2;
   --color-primary-contrast: #ffffff;
-  --color-accent: #c9a227;
-  --color-text: #201d16;
-  --color-muted: #756f61;
-  --color-border: #e6dfcd;
-  --color-success-bg: #dcecd9; --color-success-text: #2c5c33;
-  --color-error-bg: #f6dede;   --color-error-text: #8c2f2f;
-  --color-warning-bg: #f7ecd4; --color-warning-text: #7a5a15;
-  --radius: 10px;
-  --shadow: 0 2px 10px rgba(20, 33, 61, 0.08);
-  --font-heading: 'Playfair Display', Georgia, serif;
-  --font-body: 'Inter', system-ui, sans-serif;
+  --color-accent: #febb02;
+  --color-text: #1a1a1a;
+  --color-muted: #4a4a4a;
+  --color-border: #e7e7e7;
+  --color-success-bg: #e6f5e6; --color-success-text: #007a3d;
+  --color-error-bg: #fce8e8;   --color-error-text: #b12704;
+  --color-warning-bg: #fff8e6; --color-warning-text: #b07b12;
+  --radius: 4px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --font-heading: 'Poppins', system-ui, sans-serif;
+  --font-body: 'Poppins', system-ui, sans-serif;
 }
 
 [data-theme="dark"] {
@@ -32,8 +32,8 @@
   --color-primary-contrast: #ffffff;
   --color-accent: #f0c040;
   --color-text: #e6e9f0;
-  --color-muted: #b0b8c4;
-  --color-border: #2a3040;
+  --color-muted: #9aa3b0;
+  --color-border: #2e3545;
   --color-success-bg: #12321f; --color-success-text: #7fe0a0;
   --color-error-bg: #3a1620;   --color-error-text: #ff8a93;
   --color-warning-bg: #332612; --color-warning-text: #f0c674;
@@ -41,4 +41,128 @@
   --shadow: 0 4px 16px rgba(0,0,0,0.4);
   --font-heading: 'Poppins', system-ui, sans-serif;
   --font-body: 'Poppins', system-ui, sans-serif;
+}
+
+/* ============================================
+   Dark Mode Overrides
+   ============================================ */
+
+[data-theme="dark"] .admin-layout {
+  background: var(--color-bg);
+}
+
+[data-theme="dark"] .admin-main {
+  background: var(--color-bg);
+}
+
+[data-theme="dark"] .stat-card {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .stat-card h3 {
+  color: var(--color-primary);
+}
+
+[data-theme="dark"] .stat-card p {
+  color: var(--color-muted);
+}
+
+[data-theme="dark"] .admin-table th {
+  background: var(--color-surface);
+  color: var(--color-muted);
+}
+
+[data-theme="dark"] .admin-table td {
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .admin-table tr:hover td {
+  background: var(--color-surface);
+}
+
+[data-theme="dark"] .admin-card {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .admin-card h3 {
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .admin-form input,
+[data-theme="dark"] .admin-form select,
+[data-theme="dark"] .admin-form textarea {
+  background: var(--color-bg);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .admin-form label {
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .admin-page-title {
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .activity-log li {
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .activity-log li:hover {
+  background: var(--color-surface);
+}
+
+[data-theme="dark"] .activity-log .activity-time {
+  color: var(--color-muted);
+}
+
+[data-theme="dark"] .filter-form select {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .chart-card {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .tab-nav {
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .tab-nav a {
+  color: var(--color-muted);
+}
+
+[data-theme="dark"] .tab-nav a.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+[data-theme="dark"] .tab-nav a:hover {
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .badge-success {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+}
+
+[data-theme="dark"] .badge-error {
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
+}
+
+[data-theme="dark"] .badge-warning {
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
+}
+
+[data-theme="dark"] .badge-muted {
+  background: var(--color-border);
+  color: var(--color-muted);
 }

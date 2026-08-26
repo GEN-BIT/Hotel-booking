@@ -15,10 +15,10 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/themes.css?v=2">
-    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css?v=2">
-    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/responsive.css?v=1">
-    <script src="<?= BASE_URL ?>assets/js/language.js"></script>
+    <link rel="stylesheet" href="/hotel-booking/assets/css/themes.css?v=2">
+    <link rel="stylesheet" href="/hotel-booking/assets/css/style.css?v=2">
+    <link rel="stylesheet" href="/hotel-booking/assets/css/responsive.css?v=1">
+    <script src="/hotel-booking/assets/js/language.js"></script>
     <?php if (!empty($extraCSS)): ?>
       <?php foreach ((array)$extraCSS as $css): ?>
         <link rel="stylesheet" href="<?= htmlspecialchars($css) ?>">

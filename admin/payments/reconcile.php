@@ -1,5 +1,5 @@
 <?php require_once __DIR__ . '/../../config/config.php';
-require_once __DIR__ . '/../../includes/payment-gateway.php';
+require_once __DIR__ . '/../../includes/admin-header.php';
 require_permission('manage_payments');
 
 $pendingPayments = $pdo->query(
@@ -7,12 +7,12 @@ $pendingPayments = $pdo->query(
      FROM payments p
      JOIN bookings b ON p.booking_id = b.id
      JOIN users u ON b.user_id = u.id
-      WHERE p.status = "pending" OR p.verification_status = "pending"
-      ORDER BY p.created_at DESC'
+     WHERE p.status = "pending"
+     ORDER BY p.created_at DESC'
 )->fetchAll();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $paymentId = (int)($_POST['payment_id'] ?? 0);
+    $paymentId = (int)$_POST['payment_id'] ?? 0;
     $action = $_POST['action'] ?? '';
     
     if ($paymentId && $action === 'verify') {
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['flash_error'] = $result['message'];
         }
     } elseif ($paymentId && $action === 'fail') {
-        $pdo->prepare('UPDATE payments SET status = "failed", verification_status = "failed" WHERE id = ?')
+        $pdo->prepare('UPDATE payments SET status = "failed" WHERE id = ?')
             ->execute([$paymentId]);
         $_SESSION['flash_success'] = 'Payment marked as failed.';
     }
@@ -35,22 +35,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <h1>Payment Reconciliation</h1>
-<p class="notice">Verify pending payments or mark them as failed. This is used to reconcile payments that need manual verification.</p>
+<p style="color: var(--color-muted); margin-bottom: 1.5rem;">Verify pending payments or mark them as failed. This is used to reconcile payments that need manual verification.</p>
 
 <?php if (empty($pendingPayments)): ?>
-    <p>No pending payments to reconcile.</p>
+    <div class="admin-empty">
+        <h3>No Pending Payments</h3>
+        <p>All payments have been processed. Check back later for new transactions.</p>
+    </div>
 <?php else: ?>
-<table class="data-table">
+<table class="admin-table">
     <tr><th>Booking</th><th>Guest</th><th>Amount</th><th>Method</th><th>Transaction Ref</th><th>Created</th><th>Actions</th></tr>
     <?php foreach ($pendingPayments as $p): ?>
     <tr>
         <td><?= htmlspecialchars($p['booking_reference']) ?></td>
         <td><?= htmlspecialchars($p['full_name']) ?></td>
-        <td>$<?= number_format($p['amount'], 2) ?></td>
+        <td><?= format_currency($p['amount']) ?></td>
         <td><?= htmlspecialchars($p['method']) ?></td>
         <td><?= htmlspecialchars($p['transaction_ref']) ?></td>
         <td><?= htmlspecialchars($p['created_at']) ?></td>
-        <td>
+        <td class="actions">
             <form method="post" style="display:inline;">
                 <?= csrf_field() ?>
                 <input type="hidden" name="payment_id" value="<?= $p['id'] ?>">
@@ -76,7 +79,7 @@ $activities = $pdo->query(
      ORDER BY created_at DESC LIMIT 20'
 )->fetchAll();
 ?>
-<table class="data-table">
+<table class="admin-table">
     <tr><th>Time</th><th>Action</th><th>Description</th></tr>
     <?php foreach ($activities as $a): ?>
     <tr>

@@ -84,7 +84,12 @@ if (!empty($pb['selected_services'])) {
     }
 }
 
-$total = max(0, $subtotal - $discount + $servicesTotal);
+$taxRate = (float)get_setting($pdo, 'tax_rate', 0);
+$taxName = get_setting($pdo, 'tax_name', 'Tax');
+$serviceFee = (float)get_setting($pdo, 'service_fee', 0);
+$subtotalAfterDiscount = max(0, $subtotal - $discount);
+$taxAmount = $subtotalAfterDiscount * ($taxRate / 100);
+$total = $subtotalAfterDiscount + $servicesTotal + $taxAmount + $serviceFee;
 $pb['total_price'] = $total;
 $pb['discount_amount'] = $discount;
 $pb['coupon_id'] = $appliedCoupon['id'] ?? null;
@@ -122,7 +127,7 @@ require __DIR__ . '/../includes/header.php';
     <?php if ($couponError): ?><p class="error"><?= htmlspecialchars($couponError) ?></p><?php endif; ?>
 
     <?php if ($appliedCoupon): ?>
-        <p class="success"><?= trans('coupon_applied_success', ['code' => htmlspecialchars($appliedCoupon['code']), 'discount' => number_format($discount, 2)]) ?>
+        <p class="success"><?= trans('coupon_applied_success', ['code' => htmlspecialchars($appliedCoupon['code']), 'discount' => format_currency($discount)]) ?>
         &nbsp;<a href="?remove_coupon=1"><?= trans('remove') ?></a></p>
     <?php else: ?>
         <form method="get" class="coupon-form">
@@ -130,6 +135,18 @@ require __DIR__ . '/../includes/header.php';
             <button type="submit"><?= trans('apply') ?></button>
         </form>
     <?php endif; ?>
+
+    <div style="background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius); padding:1rem; margin:1rem 0;">
+        <h3 style="margin:0 0 0.75rem; font-size:1rem;">Price Details</h3>
+        <table style="width:100%; border-collapse:collapse;">
+            <tr><td style="padding:0.3rem 0; color:var(--color-muted);">Room total (<?= $nights ?> nights)</td><td style="text-align:right;"><?= format_currency($subtotal) ?></td></tr>
+            <?php if ($discount > 0): ?><tr><td style="padding:0.3rem 0; color:var(--color-success);">Discount</td><td style="text-align:right; color:var(--color-success);">-<?= format_currency($discount) ?></td></tr><?php endif; ?>
+            <?php if ($servicesTotal > 0): ?><tr><td style="padding:0.3rem 0; color:var(--color-muted);">Services</td><td style="text-align:right;"><?= format_currency($servicesTotal) ?></td></tr><?php endif; ?>
+            <?php if ($taxAmount > 0): ?><tr><td style="padding:0.3rem 0; color:var(--color-muted);"><?= htmlspecialchars($taxName) ?> (<?= number_format($taxRate, 2) ?>%)</td><td style="text-align:right;"><?= format_currency($taxAmount) ?></td></tr><?php endif; ?>
+            <?php if ($serviceFee > 0): ?><tr><td style="padding:0.3rem 0; color:var(--color-muted);">Service Fee</td><td style="text-align:right;"><?= format_currency($serviceFee) ?></td></tr><?php endif; ?>
+            <tr style="border-top:2px solid var(--color-border);"><td style="padding:0.5rem 0; font-weight:700;">Total</td><td style="text-align:right; font-weight:700; font-size:1.1rem; color:var(--color-primary);"><?= format_currency($total) ?></td></tr>
+        </table>
+    </div>
 
     <p class="price"><?= trans('total_price_label') ?> <?= format_currency($total) ?></p>
     <form method="post" action="confirm.php">

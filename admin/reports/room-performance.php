@@ -18,7 +18,7 @@ $rows = $stmt->fetchAll();
     <tr>
         <td><?= htmlspecialchars($r['name']) ?></td>
         <td><?= (int)$r['bookings'] ?></td>
-        <td>$<?= number_format($r['revenue'], 2) ?></td>
+        <td><?= format_currency($r['revenue']) ?></td>
         <td><?= round($r['avg_stay'], 1) ?></td>
     </tr>
     <?php endforeach; ?>

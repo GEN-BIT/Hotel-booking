@@ -27,7 +27,7 @@ $reason = $_GET['reason'] ?? 'Administrator refund';
 $result = $paymentManager->refund($id, $payment['amount'], $reason, $_SESSION['user_id']);
 
 if ($result['success']) {
-    $_SESSION['flash_success'] = 'Refund of $' . number_format($payment['amount'], 2) . ' processed successfully.';
+    $_SESSION['flash_success'] = 'Refund of ' . format_currency($payment['amount']) . ' processed successfully.';
 } else {
     $_SESSION['flash_error'] = $result['message'];
 }

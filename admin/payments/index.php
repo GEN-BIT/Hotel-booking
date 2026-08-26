@@ -16,7 +16,7 @@ $payments = $stmt->fetchAll();
     <tr>
         <td><?= htmlspecialchars($p['booking_reference']) ?></td>
         <td><?= htmlspecialchars($p['full_name']) ?></td>
-        <td>$<?= number_format($p['amount'], 2) ?></td>
+        <td><?= format_currency($p['amount']) ?></td>
         <td><?= htmlspecialchars($p['method']) ?></td>
         <td><span class="status status-<?= htmlspecialchars($p['status']) ?>"><?= htmlspecialchars($p['status']) ?></span></td>
         <td><span class="status status-<?= htmlspecialchars($p['payment_status'] ?? 'pending') ?>"><?= htmlspecialchars($p['payment_status'] ?? 'pending') ?></span></td>

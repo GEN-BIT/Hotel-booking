@@ -14,6 +14,7 @@ require __DIR__ . '/../includes/header.php';
 <h1><?= trans('welcome_name', ['name' => htmlspecialchars($_SESSION['full_name'])]) ?></h1>
 <ul class="account-menu">
     <li><a href="reservations.php"><?= trans('my_reservations') ?></a> (<?= $upcomingCount ?> <?= trans('upcoming') ?>)</li>
+    <li><a href="wishlist.php"><?= trans('my_wishlist') ?></a></li>
     <li><a href="invoices.php"><?= trans('invoices') ?></a></li>
     <li><a href="notifications.php"><?= trans('notifications_label') ?></a> (<?= $unreadCount ?> <?= trans('unread') ?>)</li>
     <li><a href="profile.php"><?= trans('profile') ?></a></li>

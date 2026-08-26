@@ -9,7 +9,7 @@ $services = $pdo->query('SELECT * FROM services ORDER BY name')->fetchAll();
     <?php foreach ($services as $s): ?>
     <tr>
         <td><?= htmlspecialchars($s['name']) ?></td>
-        <td>$<?= number_format($s['price'], 2) ?></td>
+        <td><?= format_currency($s['price']) ?></td>
         <td><?= $s['is_active'] ? trans('yes') : trans('no') ?></td>
         <td><a href="edit.php?id=<?= (int)$s['id'] ?>"><?= trans('edit') ?></a> | <a href="delete.php?id=<?= (int)$s['id'] ?>" onclick="return confirm('<?= trans('delete_this_service') ?>')"><?= trans('delete') ?></a></td>
     </tr>

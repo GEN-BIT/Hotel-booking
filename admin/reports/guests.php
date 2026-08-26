@@ -25,7 +25,7 @@ $topGuests = $pdo->query(
         <td><?= htmlspecialchars($g['full_name']) ?></td>
         <td><?= htmlspecialchars($g['email']) ?></td>
         <td><?= (int)$g['bookings'] ?></td>
-        <td>$<?= number_format($g['spent'], 2) ?></td>
+        <td><?= format_currency($g['spent']) ?></td>
     </tr>
     <?php endforeach; ?>
 </table>

@@ -13,7 +13,7 @@ $lostRevenue = (float)$pdo->query('SELECT COALESCE(SUM(total_price),0) FROM book
 <h1>Cancellations Report</h1>
 <div class="stat-grid">
     <div class="stat-card"><h3><?= $totalCount ?></h3><p>Total Cancellations</p></div>
-    <div class="stat-card"><h3>$<?= number_format($lostRevenue, 2) ?></h3><p>Lost Revenue</p></div>
+    <div class="stat-card"><h3><?= format_currency($lostRevenue) ?></h3><p>Lost Revenue</p></div>
 </div>
 <table class="data-table">
     <tr><th>Reference</th><th>Guest</th><th>Dates</th><th>Value</th><th>Cancelled At</th></tr>
@@ -22,7 +22,7 @@ $lostRevenue = (float)$pdo->query('SELECT COALESCE(SUM(total_price),0) FROM book
         <td><?= htmlspecialchars($c['booking_reference']) ?></td>
         <td><?= htmlspecialchars($c['full_name']) ?></td>
         <td><?= htmlspecialchars($c['check_in']) ?> &rarr; <?= htmlspecialchars($c['check_out']) ?></td>
-        <td>$<?= number_format($c['total_price'], 2) ?></td>
+        <td><?= format_currency($c['total_price']) ?></td>
         <td><?= htmlspecialchars($c['updated_at']) ?></td>
     </tr>
     <?php endforeach; ?>

@@ -1,6 +1,5 @@
-<?php require_once __DIR__ . '/../config/config.php';
-require_once __DIR__ . '/../includes/payment-gateway.php';
-require_once __DIR__ . '/../includes/notifications.php';
+<?php
+require_once __DIR__ . '/../config/config.php';
 require_login();
 
 $bookingId = $_SESSION['last_booking_id'] ?? 0;
@@ -19,64 +18,45 @@ if ($booking['payment_status'] === 'paid') {
     exit;
 }
 
-$gateway = PaymentManager::getActiveGateway($pdo);
-$enabledMethods = array_filter(explode(',', get_setting($pdo, 'enabled_payment_methods', 'card,cash,bank_transfer,mobile_money')));
-$error = '';
-$success = '';
-$paymentResult = null;
-
+// Calculate amount due
 $balance = PaymentManager::getPaymentBalance($bookingId);
 $depositPercentage = (int)get_setting($pdo, 'deposit_percentage', 0);
 $depositAmount = $depositPercentage > 0 ? ($booking['total_price'] * $depositPercentage / 100) : $booking['total_price'];
-$amountDue = $depositAmount - $balance['net_paid'];
-$amountDue = max(0, $amountDue);
+$amountDue = max(0, $depositAmount - $balance['net_paid']);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!verify_csrf($_POST['csrf_token'] ?? '')) {
-        $error = 'Invalid or expired CSRF token. Please try again.';
+$stripeClientSecret = null;
+$stripePublicKey = null;
+$error = '';
+
+// Check if Stripe is the active gateway and enabled
+$gateway = PaymentManager::getActiveGateway($pdo);
+if ($gateway instanceof StripePaymentGateway && $gateway->isEnabled() && $amountDue > 0) {
+    $stripePublicKey = get_setting($pdo, 'stripe_public_key');
+
+    // Create a Payment Intent
+    $paymentIntent = $gateway->createPaymentIntent(
+        (int)($amountDue * 100), // Amount in cents
+        strtolower(get_setting($pdo, 'site_currency', 'usd')),
+        [
+            'booking_id' => $bookingId,
+            'booking_reference' => $booking['booking_reference'],
+            'user_id' => $_SESSION['user_id']
+        ]
+    );
+
+    if ($paymentIntent) {
+        $stripeClientSecret = $paymentIntent->client_secret;
     } else {
-        $method = $_POST['method'] ?? '';
-        if (!in_array($method, $enabledMethods, true)) {
-            $error = 'Please select a valid payment method.';
-        } else {
-            $paymentManager = new PaymentManager($pdo, $gateway);
-            $paymentResult = $paymentManager->createPayment($bookingId, $amountDue, $method, [
-                'booking_reference' => $booking['booking_reference'],
-                'customer_email' => $_SESSION['user_email'] ?? '',
-                'customer_name' => $_SESSION['full_name'] ?? '',
-            ]);
-            
-            if ($paymentResult['gateway_result']['success']) {
-                $verifyResult = $paymentManager->verifyPayment($paymentResult['payment_id']);
-                
-                if ($verifyResult['success']) {
-                    $success = 'Payment of $' . number_format($amountDue, 2) . ' received successfully!';
-                    log_activity($pdo, 'payment.received', 
-                        "Payment of $" . number_format($amountDue, 2) . " received for booking {$booking['booking_reference']} via $method");
-                    
-                    try {
-                        $notifier = new NotificationService($pdo);
-                        $notifier->sendPaymentReceiptToGuest($paymentResult['payment_id']);
-                    } catch (Exception $e) {
-                        error_log('Payment receipt notification failed: ' . $e->getMessage());
-                    }
-                    
-                    if ($balance['balance'] <= $amountDue) {
-                        header('Location: ' . BASE_URL . 'booking/success.php');
-                        exit;
-                    }
-                } else {
-                    $error = 'Payment verification failed. Please try again.';
-                }
-            } else {
-                $error = $paymentResult['gateway_result']['message'] ?? 'Payment failed. Please try again.';
-            }
-        }
+        $error = 'Could not initialize payment process. Please contact support.';
     }
+} else {
+    // Fallback or error for when Stripe is not available
+    $error = 'Online payment is currently unavailable. Please try again later.';
 }
 
 require __DIR__ . '/../includes/header.php';
 ?>
+
 <h1><?= trans('payment_title') ?></h1>
 <p><?= trans('booking_label') ?> <?= htmlspecialchars($booking['booking_reference']) ?></p>
 
@@ -87,22 +67,6 @@ require __DIR__ . '/../includes/header.php';
             <td style="padding: 0.5rem 0; color: var(--color-muted);"><?= trans('total_price_label') ?></td>
             <td style="padding: 0.5rem 0; text-align: right; font-weight: 600;">$<?= number_format($booking['total_price'], 2) ?></td>
         </tr>
-        <?php if ($booking['discount_amount'] > 0): ?>
-        <tr>
-            <td style="padding: 0.5rem 0; color: var(--color-muted);"><?= trans('discount_applied') ?></td>
-            <td style="padding: 0.5rem 0; text-align: right; color: var(--color-success);">-$<?= number_format($booking['discount_amount'], 2) ?></td>
-        </tr>
-        <?php endif; ?>
-        <?php if ($depositPercentage > 0): ?>
-        <tr>
-            <td style="padding: 0.5rem 0; color: var(--color-muted);"><?= trans('deposit_required') ?> (<?= $depositPercentage ?>%)</td>
-            <td style="padding: 0.5rem 0; text-align: right; font-weight: 600;">$<?= number_format($depositAmount, 2) ?></td>
-        </tr>
-        <?php endif; ?>
-        <tr>
-            <td style="padding: 0.5rem 0; color: var(--color-muted);"><?= trans('amount_paid') ?></td>
-            <td style="padding: 0.5rem 0; text-align: right;">$<?= number_format($balance['net_paid'], 2) ?></td>
-        </tr>
         <tr style="border-top: 2px solid var(--color-border);">
             <td style="padding: 0.75rem 0; font-weight: 700; font-size: 1.1rem;"><?= trans('balance_due') ?></td>
             <td style="padding: 0.75rem 0; text-align: right; font-weight: 700; font-size: 1.1rem; color: var(--color-accent);">$<?= number_format($amountDue, 2) ?></td>
@@ -110,23 +74,90 @@ require __DIR__ . '/../includes/header.php';
     </table>
 </div>
 
-<?php if ($error): ?><p class="error"><?= htmlspecialchars($error) ?></p><?php endif; ?>
-<?php if ($success): ?><p class="success"><?= htmlspecialchars($success) ?></p><?php endif; ?>
+<?php if ($error): ?>
+    <p class="error"><?= htmlspecialchars($error) ?></p>
+<?php endif; ?>
 
-<?php if ($amountDue > 0): ?>
-<form method="post">
-    <?= csrf_field() ?>
-    <fieldset>
-        <legend><?= trans('select_payment_method') ?></legend>
-        <?php foreach ($enabledMethods as $m): ?>
-        <label class="checkbox"><input type="radio" name="method" value="<?= htmlspecialchars($m) ?>" required> <?= ucfirst(str_replace('_',' ',$m)) ?></label>
-        <?php endforeach; ?>
-    </fieldset>
-    <button type="submit"><?= trans('pay_now') ?> $<?= number_format($amountDue, 2) ?></button>
-</form>
-<?php else: ?>
-<p class="success"><?= trans('payment_complete') ?></p>
-<a href="<?= BASE_URL ?>booking/success.php" class="cta"><?= trans('continue') ?></a>
+<?php if ($stripeClientSecret && $stripePublicKey && $amountDue > 0): ?>
+    <div id="payment-container">
+        <form id="payment-form">
+            <div id="payment-element">
+                <!-- Stripe.js will create the payment element here -->
+            </div>
+            <button id="submit" class="cta" style="margin-top: 1.5rem; width: 100%;">
+                <span id="button-text"><?= trans('pay_now') ?> $<?= number_format($amountDue, 2) ?></span>
+                <span id="spinner" style="display: none;">Processing...</span>
+            </button>
+            <div id="payment-message" class="error" style="display: none; margin-top: 1rem;"></div>
+        </form>
+    </div>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const stripe = Stripe('<?= htmlspecialchars($stripePublicKey) ?>');
+            const clientSecret = '<?= $stripeClientSecret ?>';
+            
+            const options = {
+                clientSecret: clientSecret,
+                appearance: {
+                    theme: 'stripe',
+                    variables: {
+                        colorPrimary: '#0570de',
+                        colorBackground: '#ffffff',
+                        colorText: '#30313d',
+                        colorDanger: '#df1b41',
+                        fontFamily: 'Ideal Sans, system-ui, sans-serif',
+                        spacingUnit: '2px',
+                        borderRadius: '4px',
+                    }
+                }
+            };
+
+            // Set up Stripe.js and Elements
+            const elements = stripe.elements(options);
+
+            // Create and mount the Payment Element
+            const paymentElement = elements.create('payment');
+            paymentElement.mount('#payment-element');
+
+            const form = document.getElementById('payment-form');
+            const submitButton = document.getElementById('submit');
+            const paymentMessage = document.getElementById('payment-message');
+
+            form.addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                // Disable the button to prevent multiple submissions
+                submitButton.disabled = true;
+                document.getElementById('spinner').style.display = 'inline';
+                document.getElementById('button-text').style.display = 'none';
+
+                const { error } = await stripe.confirmPayment({
+                    elements,
+                    confirmParams: {
+                        return_url: '<?= BASE_URL . 'booking/payment_status.php?booking_id=' . $bookingId ?>',
+                    }
+                });
+
+                if (error) {
+                    // This point will only be reached if there is an immediate error when
+                    // confirming the payment. Otherwise, your customer will be redirected to
+                    // your `return_url`.
+                    paymentMessage.textContent = error.message;
+                    paymentMessage.style.display = 'block';
+                    
+                    // Re-enable the button
+                    submitButton.disabled = false;
+                    document.getElementById('spinner').style.display = 'none';
+                    document.getElementById('button-text').style.display = 'inline';
+                }
+            });
+        });
+    </script>
+<?php elseif ($amountDue <= 0): ?>
+    <p class="success"><?= trans('payment_complete') ?></p>
+    <a href="<?= BASE_URL ?>booking/success.php" class="cta"><?= trans('continue') ?></a>
 <?php endif; ?>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>

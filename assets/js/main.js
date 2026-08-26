@@ -162,7 +162,7 @@
       item.addEventListener('click', function () {
         const id = this.getAttribute('data-notification-id');
         if (id) {
-          fetch('<?= BASE_URL ?>account/notifications.php?mark_read=' + id, {
+          fetch('/hotel-booking/account/notifications.php?mark_read=' + id, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
@@ -237,7 +237,7 @@
     // Handle image errors
     document.querySelectorAll('img').forEach(function (img) {
       img.addEventListener('error', function () {
-        this.src = '<?= BASE_URL ?>assets/images/placeholder.jpg';
+        this.src = '/hotel-booking/assets/images/placeholder.jpg';
         this.alt = 'Image not available';
       });
     });
@@ -254,7 +254,7 @@
     const currentUrl = window.location.pathname;
     const parts = currentUrl.split('/').filter(function (part) { return part; });
     
-    let breadcrumbHTML = '<a href="<?= BASE_URL ?>">Home</a>';
+    let breadcrumbHTML = '<a href="/hotel-booking/">Home</a>';
     let path = '';
     
     const labels = {

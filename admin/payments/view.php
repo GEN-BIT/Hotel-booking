@@ -22,7 +22,7 @@ $refundHistory = $refunds->fetchAll();
 ?>
 <h1>Payment for <?= htmlspecialchars($payment['booking_reference']) ?></h1>
 <p>Guest: <?= htmlspecialchars($payment['full_name']) ?></p>
-<p>Amount: $<?= number_format($payment['amount'], 2) ?></p>
+<p>Amount: <?= format_currency($payment['amount']) ?></p>
 <p>Method: <?= htmlspecialchars($payment['method']) ?></p>
 <p>Status: <span class="status status-<?= htmlspecialchars($payment['status']) ?>"><?= htmlspecialchars($payment['status']) ?></span></p>
 <p>Transaction Ref: <?= htmlspecialchars($payment['transaction_ref'] ?? '—') ?></p>
@@ -33,20 +33,20 @@ $refundHistory = $refunds->fetchAll();
     <table style="width: 100%;">
         <tr>
             <td style="padding: 0.5rem 0; color: var(--color-muted);">Total Price</td>
-            <td style="padding: 0.5rem 0; text-align: right;">$<?= number_format($balance['total_price'], 2) ?></td>
+            <td style="padding: 0.5rem 0; text-align: right;"><?= format_currency($balance['total_price']) ?></td>
         </tr>
         <tr>
             <td style="padding: 0.5rem 0; color: var(--color-muted);">Total Paid</td>
-            <td style="padding: 0.5rem 0; text-align: right;">$<?= number_format($balance['total_paid'], 2) ?></td>
+            <td style="padding: 0.5rem 0; text-align: right;"><?= format_currency($balance['total_paid']) ?></td>
         </tr>
         <tr>
             <td style="padding: 0.5rem 0; color: var(--color-muted);">Refunded</td>
-            <td style="padding: 0.5rem 0; text-align: right; color: var(--color-error);">-$<?= number_format($balance['refunded'], 2) ?></td>
+            <td style="padding: 0.5rem 0; text-align: right; color: var(--color-error);">-<?= format_currency($balance['refunded']) ?></td>
         </tr>
         <tr style="border-top: 2px solid var(--color-border);">
             <td style="padding: 0.75rem 0; font-weight: 700;">Balance Due</td>
             <td style="padding: 0.75rem 0; text-align: right; font-weight: 700; color: <?= $balance['is_paid'] ? 'var(--color-success)' : 'var(--color-accent)' ?>;">
-                $<?= number_format($balance['balance'], 2) ?>
+                <?= format_currency($balance['balance']) ?>
                 <?php if ($balance['is_paid']): ?> ✓ Paid<?php endif; ?>
             </td>
         </tr>
@@ -59,7 +59,7 @@ $refundHistory = $refunds->fetchAll();
     <tr><th>Amount</th><th>Reason</th><th>Status</th><th>Date</th></tr>
     <?php foreach ($refundHistory as $refund): ?>
     <tr>
-        <td>$<?= number_format($refund['amount'], 2) ?></td>
+        <td><?= format_currency($refund['amount']) ?></td>
         <td><?= htmlspecialchars($refund['reason'] ?? '—') ?></td>
         <td><span class="status status-<?= htmlspecialchars($refund['status']) ?>"><?= htmlspecialchars($refund['status']) ?></span></td>
         <td><?= htmlspecialchars($refund['created_at']) ?></td>
@@ -69,7 +69,7 @@ $refundHistory = $refunds->fetchAll();
 <?php endif; ?>
 
 <?php if ($payment['status'] === 'paid' && $balance['available_for_refund'] > 0): ?>
-    <a href="refund.php?id=<?= $id ?>" class="cta cta-danger" onclick="return confirm('Issue a refund of $<?= number_format($payment['amount'], 2) ?>?')">Issue Refund</a>
+    <a href="refund.php?id=<?= $id ?>" class="cta cta-danger" onclick="return confirm('Issue a refund of <?= format_currency($payment['amount']) ?>?')">Issue Refund</a>
 <?php endif; ?>
 <a href="index.php">Back to Payments</a>
 <?php require __DIR__ . '/../../includes/admin-footer.php'; ?>

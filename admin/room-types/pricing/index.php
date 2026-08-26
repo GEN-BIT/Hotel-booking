@@ -16,7 +16,7 @@ $pricing = $stmt->fetchAll();
     <tr><th>Price</th><th>Valid From</th><th>Valid Until</th><th>Note</th><th></th></tr>
     <?php foreach ($pricing as $p): ?>
     <tr>
-        <td>$<?= number_format($p['price'], 2) ?></td>
+        <td><?= format_currency($p['price']) ?></td>
         <td><?= htmlspecialchars($p['valid_from']) ?></td>
         <td><?= htmlspecialchars($p['valid_until']) ?></td>
         <td><?= htmlspecialchars($p['note'] ?? '') ?></td>

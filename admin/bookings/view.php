@@ -31,9 +31,9 @@ foreach ($serviceOrders as $so) { $servicesTotal += $so['unit_price'] * $so['qua
 <p>Room: <?= htmlspecialchars($booking['type_name']) ?> — <?= htmlspecialchars($booking['room_number']) ?></p>
 <p>Dates: <?= htmlspecialchars($booking['check_in']) ?> &rarr; <?= htmlspecialchars($booking['check_out']) ?></p>
 <?php if ($booking['discount_amount'] > 0): ?>
-    <p>Coupon<?= $booking['coupon_code'] ? ' (' . htmlspecialchars($booking['coupon_code']) . ')' : '' ?> discount: -$<?= number_format($booking['discount_amount'], 2) ?></p>
+    <p>Coupon<?= $booking['coupon_code'] ? ' (' . htmlspecialchars($booking['coupon_code']) . ')' : '' ?> discount: -<?= format_currency($booking['discount_amount']) ?></p>
 <?php endif; ?>
-<p>Room Total: $<?= number_format($booking['total_price'], 2) ?></p>
+<p>Room Total: <?= format_currency($booking['total_price']) ?></p>
 <?php if ($guests): ?><p>Additional guests: <?= htmlspecialchars(implode(', ', $guests)) ?></p><?php endif; ?>
 <?php if (!empty($booking['special_requests'])): ?><p>Requests: <?= htmlspecialchars($booking['special_requests']) ?></p><?php endif; ?>
 <p>Status: <span class="status status-<?= htmlspecialchars($booking['status']) ?>"><?= htmlspecialchars($booking['status']) ?></span></p>
@@ -46,12 +46,12 @@ foreach ($serviceOrders as $so) { $servicesTotal += $so['unit_price'] * $so['qua
     <tr>
         <td><?= htmlspecialchars($so['name']) ?></td>
         <td><?= (int)$so['quantity'] ?></td>
-        <td>$<?= number_format($so['unit_price'] * $so['quantity'], 2) ?></td>
+        <td><?= format_currency($so['unit_price'] * $so['quantity']) ?></td>
         <td><?= htmlspecialchars($so['status']) ?></td>
     </tr>
     <?php endforeach; ?>
 </table>
-<p>Services subtotal: $<?= number_format($servicesTotal, 2) ?></p>
+<p>Services subtotal: <?= format_currency($servicesTotal) ?></p>
 <?php endif; ?>
 
 <div class="action-buttons">

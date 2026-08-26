@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . '/../../includes/admin-header.php';
 require_permission('manage_rooms');
 
 $rooms = $pdo->query('SELECT r.*, rt.name AS type_name FROM rooms r JOIN room_types rt ON r.room_type_id = rt.id ORDER BY r.room_number')->fetchAll();
@@ -38,10 +39,10 @@ $maintenance = $pdo->query(
 
 <?php if ($success): ?><p class="success"><?= htmlspecialchars($success) ?></p><?php endif; ?>
 
-<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; margin-top: 1.5rem;">
-    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius); padding: 1.5rem;">
-        <h3 style="margin: 0 0 1rem;">Schedule Maintenance</h3>
-        <form method="post">
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; margin-top: 1.5rem;">
+    <div class="admin-card">
+        <h3>Schedule Maintenance</h3>
+        <form method="post" class="admin-form">
             <label>Room
                 <select name="room_id" required>
                     <option value="">-- Select Room --</option>
@@ -59,7 +60,7 @@ $maintenance = $pdo->query(
 
     <div>
         <h3>Maintenance Schedule</h3>
-        <table class="data-table">
+        <table class="admin-table">
             <tr><th>Room</th><th>Type</th><th>Start</th><th>End</th><th>Status</th><th>Notes</th></tr>
             <?php foreach ($maintenance as $m): ?>
             <tr>
@@ -67,7 +68,7 @@ $maintenance = $pdo->query(
                 <td><?= htmlspecialchars($m['type_name']) ?></td>
                 <td><?= htmlspecialchars($m['start_date']) ?></td>
                 <td><?= htmlspecialchars($m['end_date']) ?></td>
-                <td><span class="status status-<?= htmlspecialchars($m['status']) ?>"><?= htmlspecialchars($m['status']) ?></span></td>
+                <td><span class="badge badge-<?= htmlspecialchars($m['status']) ?>"><?= htmlspecialchars($m['status']) ?></span></td>
                 <td><?= htmlspecialchars($m['notes'] ?? '—') ?></td>
             </tr>
             <?php endforeach; ?>
