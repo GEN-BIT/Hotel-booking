@@ -1,6 +1,12 @@
 <?php
 session_start();
 
+// Load Composer autoloader
+$autoloadPath = __DIR__ . '/../vendor/autoload.php';
+if (file_exists($autoloadPath)) {
+    require_once $autoloadPath;
+}
+
 // Load environment variables
 $envFile = __DIR__ . '/../.env';
 if (file_exists($envFile)) {

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" width="120" height="40">
+  <rect x="0" y="0" width="40" height="40" rx="8" fill="#c9a84c"/>
+  <text x="20" y="26" text-anchor="middle" fill="#1e293b" font-family="serif" font-size="20" font-weight="bold">V</text>
+  <text x="50" y="26" fill="#1e293b" font-family="serif" font-size="18" font-weight="600">VAREK</text>
+</svg>

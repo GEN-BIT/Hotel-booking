@@ -4,43 +4,51 @@
 
 :root,
 [data-theme="luxury"] {
-  --color-bg: #ffffff;
+  --color-bg: #faf9f7;
   --color-surface: #ffffff;
-  --color-header: #003580;
+  --color-header: #1e293b;
   --color-header-contrast: #ffffff;
-  --color-primary: #0071c2;
+  --color-primary: #1e293b;
   --color-primary-contrast: #ffffff;
-  --color-accent: #febb02;
-  --color-text: #1a1a1a;
-  --color-muted: #4a4a4a;
-  --color-border: #e7e7e7;
-  --color-success-bg: #e6f5e6; --color-success-text: #007a3d;
-  --color-error-bg: #fce8e8;   --color-error-text: #b12704;
-  --color-warning-bg: #fff8e6; --color-warning-text: #b07b12;
-  --radius: 4px;
-  --shadow: 0 2px 8px rgba(0,0,0,0.08);
-  --font-heading: 'Poppins', system-ui, sans-serif;
-  --font-body: 'Poppins', system-ui, sans-serif;
+  --color-accent: #c9a84c;
+  --color-accent-light: #f5f0e6;
+  --color-text: #1e293b;
+  --color-text-secondary: #475569;
+  --color-muted: #64748b;
+  --color-border: #e2e8f0;
+  --color-success-bg: #ecfdf5; --color-success-text: #065f46;
+  --color-error-bg: #fef2f2;   --color-error-text: #991b1b;
+  --color-warning-bg: #fffbeb; --color-warning-text: #92400e;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 6px 20px rgba(0,0,0,0.06);
+  --shadow-lg: 0 10px 40px rgba(0,0,0,0.08);
+  --font-heading: 'Playfair Display', 'Poppins', system-ui, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
 }
 
 [data-theme="dark"] {
-  --color-bg: #0f1420;
-  --color-surface: #1a1f2e;
-  --color-header: #0b0f19;
-  --color-header-contrast: #f0f2f5;
-  --color-primary: #d4af37;
-  --color-primary-contrast: #ffffff;
-  --color-accent: #f0c040;
-  --color-text: #e6e9f0;
-  --color-muted: #9aa3b0;
-  --color-border: #2e3545;
-  --color-success-bg: #12321f; --color-success-text: #7fe0a0;
-  --color-error-bg: #3a1620;   --color-error-text: #ff8a93;
-  --color-warning-bg: #332612; --color-warning-text: #f0c674;
-  --radius: 10px;
-  --shadow: 0 4px 16px rgba(0,0,0,0.4);
-  --font-heading: 'Poppins', system-ui, sans-serif;
-  --font-body: 'Poppins', system-ui, sans-serif;
+  --color-bg: #0f172a;
+  --color-surface: #1e293b;
+  --color-header: #0f172a;
+  --color-header-contrast: #f1f5f9;
+  --color-primary: #f1f5f9;
+  --color-primary-contrast: #0f172a;
+  --color-accent: #d4af37;
+  --color-accent-light: #3f3a2b;
+  --color-text: #f1f5f9;
+  --color-text-secondary: #cbd5e1;
+  --color-muted: #94a3b8;
+  --color-border: #334155;
+  --color-success-bg: #064e3b; --color-success-text: #a7f3d0;
+  --color-error-bg: #450a0a;   --color-error-text: #fecaca;
+  --color-warning-bg: #451a03; --color-warning-text: #fde68a;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.2), 0 6px 20px rgba(0,0,0,0.3);
+  --shadow-lg: 0 10px 40px rgba(0,0,0,0.4);
+  --font-heading: 'Playfair Display', 'Poppins', system-ui, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
 }
 
 /* ============================================
@@ -139,8 +147,8 @@
 }
 
 [data-theme="dark"] .tab-nav a.active {
-  color: var(--color-primary);
-  border-bottom-color: var(--color-primary);
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
 }
 
 [data-theme="dark"] .tab-nav a:hover {

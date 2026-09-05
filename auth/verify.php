@@ -1,6 +1,6 @@
 <?php require_once __DIR__ . '/../config/config.php';
 
-$extraCSS = [BASE_URL . 'assets/css/auth.css'];
+$extraCSS = ['/hotel-booking/assets/css/auth.css'];
 
 $token = $_GET['token'] ?? '';
 if (!$token) die('Invalid verification link.');

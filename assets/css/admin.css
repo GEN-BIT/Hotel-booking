@@ -1,5 +1,5 @@
 /* ============================================
-   Admin Panel Styles
+   Admin Panel — Luxury Edition
    ============================================ */
 
 .admin-layout {
@@ -8,283 +8,265 @@
   background: var(--color-bg);
 }
 
-.admin-layout::before {
-  display: none;
-}
-
 .admin-sidebar {
   width: 260px;
   background: var(--color-header);
   color: var(--color-header-contrast);
-  padding: 1.5rem 1rem;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 1;
-  border-right: 1px solid var(--color-border);
+  padding: 1.5rem 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 2px 0 20px rgba(0,0,0,0.06);
 }
 
 .admin-sidebar .logo {
-  color: var(--color-header-contrast);
   font-family: var(--font-heading);
   font-weight: 700;
+  font-size: 1.25rem;
+  color: #ffffff;
   text-decoration: none;
+  padding: 0.5rem 1.5rem;
   display: block;
-  margin-bottom: 2rem;
-  font-size: 1.2rem;
-  padding: 0.5rem 0.6rem;
-  border-radius: 2px;
-  transition: background 0.2s;
-}
-
-.admin-sidebar .logo:hover {
-  background: rgba(255,255,255,0.1);
-}
-
-.admin-sidebar nav {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.02em;
 }
 
 .admin-sidebar nav a {
-  color: var(--color-header-contrast);
-  opacity: 0.85;
-  text-decoration: none;
-  padding: 0.6rem 0.75rem;
-  border-radius: 2px;
-  transition: all 0.2s;
-  font-size: 0.9rem;
   display: block;
-  margin-bottom: 0.25rem;
+  color: rgba(255,255,255,0.75);
+  text-decoration: none;
+  padding: 0.7rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+  letter-spacing: 0.01em;
 }
 
 .admin-sidebar nav a:hover {
-  opacity: 1;
-  background: rgba(255,255,255,0.1);
-}
-
-.admin-sidebar .theme-switcher {
-  margin-top: 1.5rem;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: 0.3rem 0.5rem;
-  box-shadow: var(--shadow);
-}
-
-.admin-sidebar .theme-select {
-  border: none !important;
-  background: transparent !important;
-  color: var(--color-text) !important;
-  font-size: 0.9rem !important;
-  padding: 0.4rem 0.5rem !important;
-  cursor: pointer;
-  width: 100%;
-  font-weight: 600 !important;
-}
-
-.admin-sidebar .theme-select option {
-  background: var(--color-surface) !important;
-  color: var(--color-text) !important;
-  font-weight: 600 !important;
-  padding: 0.4rem 0.6rem !important;
-  font-size: 0.9rem !important;
+  background: rgba(255,255,255,0.06);
+  color: #ffffff;
+  border-left-color: var(--color-accent);
 }
 
 .admin-main-wrapper {
   flex: 1;
+  margin-left: 260px;
   display: flex;
   flex-direction: column;
-  min-width: 0;
+  min-height: 100vh;
 }
 
 .admin-topbar {
   display: flex;
-  align-items: center;
   justify-content: flex-end;
-  padding: 0.75rem 1.5rem;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 2rem;
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
-  z-index: 10;
-  gap: 0.75rem;
-}
-
-.admin-page-title {
-  font-family: var(--font-heading);
-  font-size: 1.5rem;
-  margin: 0 0 1.5rem;
-  color: var(--color-text);
-  font-weight: 700;
-}
-
-.theme-select-top {
-  border: 1px solid var(--color-border) !important;
-  background: var(--color-surface) !important;
-  color: var(--color-text) !important;
-  border-radius: 2px !important;
-  padding: 0.4rem 0.6rem !important;
-  font-size: 0.85rem !important;
-  font-weight: 500 !important;
-  cursor: pointer;
-}
-
-.theme-select-top option {
-  background: var(--color-surface) !important;
-  color: var(--color-text) !important;
-  padding: 0.4rem 0.6rem !important;
-}
-
-.language-select {
-  border: 1px solid var(--color-border) !important;
-  background: var(--color-surface) !important;
-  color: var(--color-text) !important;
-  border-radius: 2px !important;
-  padding: 0.4rem 0.6rem !important;
-  font-size: 0.85rem !important;
-  font-weight: 500 !important;
-  cursor: pointer;
-  margin-right: 0.5rem;
-}
-
-.language-select option {
-  background: var(--color-surface) !important;
-  color: var(--color-text) !important;
-  padding: 0.4rem 0.6rem !important;
+  z-index: 50;
 }
 
 .admin-main {
   flex: 1;
-  padding: 1.5rem;
-  position: relative;
-  z-index: 1;
-  overflow-y: auto;
-  background: var(--color-bg);
+  padding: 2rem;
+  max-width: 1400px;
 }
 
 .admin-main h1 {
-  font-family: var(--font-heading);
   font-size: 1.75rem;
-  margin: 0 0 1.25rem;
+  margin: 0 0 1.5rem;
   color: var(--color-text);
-  font-weight: 700;
+  font-family: var(--font-heading);
+  font-weight: 600;
 }
 
+/* Stat Cards */
 .stat-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
 }
 
 .stat-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 2px;
-  padding: 1.25rem;
-  text-align: center;
+  border-radius: var(--radius);
+  padding: 1.5rem;
   box-shadow: var(--shadow);
-  transition: box-shadow 0.2s;
-}
-
-.stat-card::before {
-  display: none;
+  transition: all 0.2s ease;
 }
 
 .stat-card:hover {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
 }
 
 .stat-card h3 {
-  margin: 0 0 0.5rem;
-  font-size: 1.75rem;
+  font-size: 2rem;
+  margin: 0 0 0.25rem;
   color: var(--color-primary);
+  font-family: var(--font-heading);
   font-weight: 700;
 }
 
 .stat-card p {
   margin: 0;
   color: var(--color-muted);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.action-buttons {
-  display: flex;
-  gap: 0.75rem;
-  margin: 1.25rem 0;
-  flex-wrap: wrap;
-}
-
-.checkbox {
-  flex-direction: row !important;
-  align-items: center;
-  gap: 0.5rem !important;
-  color: var(--color-text) !important;
-}
-
-.filter-form {
-  margin-bottom: 1.5rem;
-  display: flex;
-  gap: 0.75rem;
-  align-items: flex-end;
-  flex-wrap: wrap;
-}
-
-.filter-form select {
-  max-width: 220px;
-  padding: 0.6rem 0.8rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  background: var(--color-surface);
-  color: var(--color-text);
-  font-size: 0.95rem;
-}
-
-.filter-form button {
-  padding: 0.6rem 1.2rem;
-}
-
+/* Chart Cards */
 .chart-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: 1.5rem;
-  margin-top: 1.5rem;
   box-shadow: var(--shadow);
+  margin-bottom: 1.5rem;
 }
 
+.chart-card h3 {
+  font-size: 1.1rem;
+  margin: 0 0 1rem;
+  color: var(--color-text);
+  font-family: var(--font-heading);
+}
+
+/* Activity Log */
 .activity-log {
   list-style: none;
   padding: 0;
-  margin-top: 1rem;
+  margin: 0;
 }
 
 .activity-log li {
-  padding: 0.75rem 0;
+  padding: 0.9rem 1rem;
   border-bottom: 1px solid var(--color-border);
-  font-size: 0.9rem;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: background 0.15s;
+  gap: 1rem;
+}
+
+.activity-log li:last-child {
+  border-bottom: none;
 }
 
 .activity-log li:hover {
   background: var(--color-bg);
 }
 
-.activity-log .activity-time {
+.activity-time {
   color: var(--color-muted);
   font-size: 0.8rem;
-  font-weight: 500;
+  white-space: nowrap;
 }
 
-/* ============================================
-   Admin Page Specific Styles
-   ============================================ */
+/* Forms */
+.admin-form {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  max-width: 700px;
+}
 
+.admin-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.admin-form input,
+.admin-form select,
+.admin-form textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  margin-bottom: 1rem;
+}
+
+.admin-form input:focus,
+.admin-form select:focus,
+.admin-form textarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-light);
+}
+
+.admin-form button,
+.admin-form .cta {
+  margin-top: 0.5rem;
+}
+
+/* Tables */
+.admin-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 1rem;
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--color-border);
+}
+
+.admin-table th, .admin-table td {
+  text-align: left;
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.admin-table th {
+  background: #f8fafc;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-muted);
+  font-weight: 600;
+  border-bottom: 2px solid var(--color-border);
+}
+
+[data-theme="dark"] .admin-table th {
+  background: #0f172a;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table tr:hover td {
+  background: #f8fafc;
+}
+
+[data-theme="dark"] .admin-table tr:hover td {
+  background: #0f172a;
+}
+
+/* Cards */
 .admin-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -295,238 +277,35 @@
 }
 
 .admin-card h3 {
-  margin: 0 0 1rem;
   font-size: 1.1rem;
+  margin: 0 0 1rem;
   color: var(--color-text);
-  font-weight: 600;
+  font-family: var(--font-heading);
 }
 
-.admin-form label {
-  display: block;
-  margin-bottom: 0.75rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--color-text);
-}
-
-.admin-form input,
-.admin-form select,
-.admin-form textarea {
-  width: 100%;
-  padding: 0.6rem 0.8rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-size: 0.95rem;
-  margin-top: 0.25rem;
-}
-
-.admin-form input:focus,
-.admin-form select:focus,
-.admin-form textarea:focus {
-  outline: none;
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px var(--color-surface), 0 0 0 5px var(--color-accent);
-}
-
-.admin-form button {
-  margin-top: 0.5rem;
-}
-
-.admin-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--color-surface);
-  border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: var(--shadow);
-}
-
-.admin-table th,
-.admin-table td {
-  text-align: left;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--color-border);
-  color: var(--color-text);
-}
-
-.admin-table th {
-  background: var(--color-bg);
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-muted);
-  font-weight: 600;
-}
-
-.admin-table tr:hover td {
-  background: var(--color-bg);
-}
-
-.admin-table .actions {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.admin-table .actions a,
-.admin-table .actions button {
-  font-size: 0.85rem;
-  padding: 0.3rem 0.6rem;
-}
-
-.admin-empty {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: var(--color-muted);
-}
-
-.admin-empty h3 {
-  margin: 0 0 0.5rem;
-  color: var(--color-text);
-}
-
-.tab-nav {
-  display: flex;
-  gap: 0.5rem;
-  border-bottom: 1px solid var(--color-border);
-  margin-bottom: 1.5rem;
-}
-
-.tab-nav a {
-  padding: 0.6rem 1.2rem;
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--color-muted);
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-}
-
-.tab-nav a.active {
-  color: var(--color-primary);
-  border-bottom-color: var(--color-primary);
-}
-
-.tab-nav a:hover {
-  color: var(--color-text);
-}
-
-.badge {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  text-transform: capitalize;
-  font-weight: 600;
-}
-
-.badge-success { background: var(--color-success-bg); color: var(--color-success-text); }
-.badge-warning { background: var(--color-warning-bg); color: var(--color-warning-text); }
-.badge-error { background: var(--color-error-bg); color: var(--color-error-text); }
-.badge-info { background: #e6f0fa; color: #0071c2; }
-.badge-muted { background: var(--color-border); color: var(--color-muted); }
-
-/* ============================================
-   Responsive Admin
-   ============================================ */
-
+/* Responsive */
 @media (max-width: 1024px) {
-  .admin-layout {
-    flex-direction: column;
-  }
-
   .admin-sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid var(--color-border);
-    padding: 1rem;
+    width: 240px;
   }
-
-  .admin-sidebar nav {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .admin-sidebar nav a {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.9rem;
-  }
-
   .admin-main-wrapper {
-    width: 100%;
-  }
-
-  .admin-main {
-    padding: 1.5rem 1rem;
-  }
-
-  .stat-grid {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    margin-left: 240px;
   }
 }
 
 @media (max-width: 768px) {
-  .admin-sidebar nav a {
-    font-size: 0.85rem;
-    padding: 0.5rem 0.6rem;
+  .admin-sidebar {
+    width: 100%;
+    position: relative;
+    height: auto;
   }
-
-  .admin-main {
-    padding: 1rem 0.75rem;
+  .admin-main-wrapper {
+    margin-left: 0;
   }
-
-  .admin-main h1 {
-    font-size: 1.4rem;
-  }
-
   .stat-grid {
     grid-template-columns: 1fr;
   }
-
-  .admin-table {
-    font-size: 0.85rem;
-  }
-
-  .admin-table th,
-  .admin-table td {
-    padding: 0.5rem;
-  }
-
-  .tab-nav {
-    flex-wrap: wrap;
-  }
-
-  .tab-nav a {
-    font-size: 0.85rem;
-    padding: 0.5rem 0.75rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .admin-sidebar {
-    padding: 0.75rem;
-  }
-
   .admin-main {
-    padding: 0.75rem 0.5rem;
-  }
-
-  .admin-main h1 {
-    font-size: 1.2rem;
-  }
-
-  .admin-card {
-    padding: 1rem;
-  }
-
-  .stat-card {
-    padding: 1rem;
-  }
-
-  .stat-card h3 {
-    font-size: 1.4rem;
+    padding: 1.5rem 1rem;
   }
 }

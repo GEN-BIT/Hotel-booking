@@ -29,7 +29,7 @@ if (!empty($recent)) {
         <?php foreach ($recentRooms as $rr): ?>
         <div style="min-width:180px; max-width:220px; flex:1; background:var(--color-bg); border:1px solid var(--color-border); border-radius:var(--radius); overflow:hidden; text-decoration:none; color:inherit;">
             <?php if ($rr['photo']): ?>
-            <img src="<?= BASE_URL . htmlspecialchars($rr['photo']) ?>" style="width:100%; height:120px; object-fit:cover; display:block;" loading="lazy">
+            <img src="/hotel-booking/<?= htmlspecialchars($rr['photo']) ?>" style="width:100%; height:120px; object-fit:cover; display:block;" loading="lazy">
             <?php endif; ?>
             <div style="padding:0.75rem;">
                 <div style="font-weight:600; font-size:0.9rem; margin-bottom:0.25rem; color:var(--color-primary);"><?= htmlspecialchars($rr['name']) ?></div>

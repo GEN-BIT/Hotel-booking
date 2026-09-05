@@ -23,6 +23,10 @@ abstract class PaymentGateway {
         return $this->name;
     }
     
+    public function isEnabled() {
+        return true;
+    }
+    
     protected function generateTransactionId() {
         return strtoupper(bin2hex(random_bytes(12)));
     }
@@ -415,29 +419,128 @@ class PaymentManager {
 }
 
 /**
- * Stripe Payment Gateway (placeholder for future implementation)
+ * Stripe Payment Gateway
  */
 class StripePaymentGateway extends PaymentGateway {
     protected $name = 'stripe';
+    private $publicKey;
+    private $secretKey;
+    
+    public function __construct($config = []) {
+        parent::__construct($config);
+        $this->publicKey = $config['public_key'] ?? '';
+        $this->secretKey = $config['secret_key'] ?? '';
+    }
+    
+    public function isEnabled() {
+        return !empty($this->publicKey) && !empty($this->secretKey)
+            && str_starts_with($this->publicKey, 'pk_')
+            && str_starts_with($this->secretKey, 'sk_');
+    }
+    
+    public function createPaymentIntent($amount, $currency, $metadata = []) {
+        if (!$this->isEnabled()) {
+            return null;
+        }
+        
+        try {
+            \Stripe\Stripe::setApiKey($this->secretKey);
+            
+            $intent = \Stripe\PaymentIntent::create([
+                'amount' => $amount,
+                'currency' => strtolower($currency),
+                'metadata' => $metadata,
+                'automatic_payment_methods' => ['enabled' => true],
+            ]);
+            
+            return $intent;
+        } catch (\Exception $e) {
+            error_log('Stripe PaymentIntent creation failed: ' . $e->getMessage());
+            return null;
+        }
+    }
     
     public function createPayment($bookingId, $amount, $currency = 'USD', $metadata = []) {
-        // TODO: Implement Stripe API integration
-        return [
-            'success' => false,
-            'message' => 'Stripe integration not yet implemented',
-        ];
+        $intent = $this->createPaymentIntent(
+            (int)($amount * 100),
+            $currency,
+            array_merge($metadata, ['booking_id' => $bookingId])
+        );
+        
+        if ($intent) {
+            return [
+                'success' => true,
+                'transaction_id' => $intent->id,
+                'client_secret' => $intent->client_secret,
+                'status' => $intent->status,
+            ];
+        }
+        
+        return ['success' => false, 'message' => 'Failed to create payment intent'];
     }
     
     public function verifyPayment($transactionId) {
-        return ['success' => false, 'message' => 'Stripe integration not yet implemented'];
+        if (!$this->isEnabled()) {
+            return ['success' => false, 'message' => 'Stripe not configured'];
+        }
+        
+        try {
+            \Stripe\Stripe::setApiKey($this->secretKey);
+            $intent = \Stripe\PaymentIntent::retrieve($transactionId);
+            
+            return [
+                'success' => $intent->status === 'succeeded',
+                'status' => $intent->status,
+                'amount' => $intent->amount / 100,
+                'currency' => $intent->currency,
+            ];
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
     }
     
     public function refund($transactionId, $amount, $reason = '') {
-        return ['success' => false, 'message' => 'Stripe integration not yet implemented'];
+        if (!$this->isEnabled()) {
+            return ['success' => false, 'message' => 'Stripe not configured'];
+        }
+        
+        try {
+            \Stripe\Stripe::setApiKey($this->secretKey);
+            
+            $refund = \Stripe\Refund::create([
+                'payment_intent' => $transactionId,
+                'amount' => (int)($amount * 100),
+                'reason' => $reason ?: 'requested_by_customer',
+            ]);
+            
+            return [
+                'success' => true,
+                'refund_id' => $refund->id,
+                'status' => $refund->status,
+                'amount' => $refund->amount / 100,
+            ];
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
     }
     
     public function getStatus($transactionId) {
-        return ['success' => false, 'status' => 'not_found'];
+        if (!$this->isEnabled()) {
+            return ['success' => false, 'status' => 'not_found'];
+        }
+        
+        try {
+            \Stripe\Stripe::setApiKey($this->secretKey);
+            $intent = \Stripe\PaymentIntent::retrieve($transactionId);
+            
+            return [
+                'success' => true,
+                'status' => $intent->status,
+                'amount' => $intent->amount / 100,
+            ];
+        } catch (\Exception $e) {
+            return ['success' => false, 'status' => 'not_found'];
+        }
     }
 }
 

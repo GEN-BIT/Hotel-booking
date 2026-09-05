@@ -1,7 +1,7 @@
 <?php require_once __DIR__ . '/../config/config.php';
 
-$extraCSS = [BASE_URL . 'assets/css/auth.css'];
-$extraJS = [BASE_URL . 'assets/js/auth.js'];
+$extraCSS = ['/hotel-booking/assets/css/auth.css'];
+$extraJS = ['/hotel-booking/assets/js/auth.js'];
 
 $token = $_GET['token'] ?? $_POST['token'] ?? '';
 $error = ''; $success = false;

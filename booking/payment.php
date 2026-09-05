@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../includes/payment-gateway.php';
 require_login();
 
 $bookingId = $_SESSION['last_booking_id'] ?? 0;
@@ -19,7 +20,8 @@ if ($booking['payment_status'] === 'paid') {
 }
 
 // Calculate amount due
-$balance = PaymentManager::getPaymentBalance($bookingId);
+$paymentManager = new PaymentManager($pdo);
+$balance = $paymentManager->getPaymentBalance($bookingId);
 $depositPercentage = (int)get_setting($pdo, 'deposit_percentage', 0);
 $depositAmount = $depositPercentage > 0 ? ($booking['total_price'] * $depositPercentage / 100) : $booking['total_price'];
 $amountDue = max(0, $depositAmount - $balance['net_paid']);

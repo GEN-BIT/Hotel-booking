@@ -1,7 +1,7 @@
 <?php
 http_response_code(404);
-require_once __DIR__ . '/../config/config.php';
-require __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/config/config.php';
+require __DIR__ . '/includes/header.php';
 ?>
 
 <div class="site-main" style="text-align: center; padding: 4rem 1rem;">
@@ -30,4 +30,4 @@ require __DIR__ . '/../includes/header.php';
     </div>
 </div>
 
-<?php require __DIR__ . '/../includes/footer.php'; ?>
+<?php require __DIR__ . '/includes/footer.php'; ?>
